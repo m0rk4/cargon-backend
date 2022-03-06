@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,9 +7,137 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        Int      @default(autoincrement()) @id
-  title     String
-  content   String?
-  published Boolean? @default(false)
+model cargos {
+  id       BigInt @id(map: "PK_cargos") @default(autoincrement())
+  weight   Int    @db.SmallInt
+  length   Int    @db.SmallInt
+  width    Int    @db.SmallInt
+  height   Int    @db.SmallInt
+  name     String @db.VarChar(50)
+  order_id BigInt
+  orders   orders @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cargos_orders")
+}
+
+model cities {
+  id        Int         @id(map: "PK_cities") @default(autoincrement()) @db.SmallInt
+  name      String      @db.VarChar(50)
+  locations locations[]
+}
+
+model driver_application {
+  id           BigInt @id(map: "PK_dirver_application") @default(autoincrement())
+  first_name   String @db.VarChar(50)
+  last_name    String @db.VarChar(50)
+  phone_number String @db.VarChar(15)
+  email        String @db.VarChar(255)
+}
+
+model locations {
+  id                                     BigInt   @id(map: "PK_locations") @default(autoincrement())
+  city_id                                Int      @db.SmallInt
+  street_id                              Int      @db.SmallInt
+  home                                   Int      @db.SmallInt
+  cities                                 cities   @relation(fields: [city_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_locations_cities")
+  streets                                streets  @relation(fields: [street_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_locations_streets")
+  orders_locationsToorders_from_location orders[] @relation("locationsToorders_from_location")
+  orders_locationsToorders_to_location   orders[] @relation("locationsToorders_to_location")
+}
+
+model orders {
+  id                                        BigInt              @id(map: "PK_orders") @default(autoincrement())
+  created_at                                DateTime            @db.Timestamp(6)
+  updated_at                                DateTime            @db.Timestamp(6)
+  owner_id                                  BigInt
+  from_location                             BigInt
+  to_location                               BigInt
+  status_id                                 Int                 @db.SmallInt
+  locations_locationsToorders_from_location locations           @relation("locationsToorders_from_location", fields: [from_location], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_from")
+  users                                     users               @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_users")
+  statuses                                  statuses            @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_statuses")
+  locations_locationsToorders_to_location   locations           @relation("locationsToorders_to_location", fields: [to_location], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_to")
+  cargos                                    cargos[]
+  orders_transports                         orders_transports[]
+}
+
+model orders_transports {
+  order_id        BigInt
+  transport_id    BigInt
+  actual_distance Int        @db.SmallInt
+  orders          orders     @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_transports_orders")
+  transports      transports @relation(fields: [transport_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_transports_transports")
+
+  @@id([order_id, transport_id], map: "PK_orders_transports")
+}
+
+model roles {
+  id    Int     @id(map: "PK_roles") @default(autoincrement()) @db.SmallInt
+  name  String  @db.VarChar(50)
+  users users[]
+}
+
+model statuses {
+  id          Int      @id(map: "PK_statuses") @default(autoincrement()) @db.SmallInt
+  status_name String   @db.VarChar(50)
+  orders      orders[]
+}
+
+model streets {
+  id        Int         @id(map: "PK_streets") @default(autoincrement()) @db.SmallInt
+  name      String      @db.VarChar(50)
+  locations locations[]
+}
+
+model transport_application {
+  id            BigInt @id(map: "PK_transport_application") @default(autoincrement())
+  driver_id     BigInt
+  document_uuid String @db.Uuid
+  users         users  @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_transport_application_users")
+}
+
+model transport_types {
+  id         Int          @id(map: "PK_transport_types") @default(autoincrement()) @db.SmallInt
+  type_name  String       @db.VarChar(50)
+  transports transports[]
+}
+
+model transports {
+  id                  BigInt              @id(map: "PK_transports") @default(autoincrement())
+  year_of_production  DateTime            @db.Date
+  brand               String              @db.VarChar(50)
+  model               String              @db.VarChar(50)
+  registration_number String              @db.VarChar(7)
+  driver_id           BigInt
+  type_id             Int                 @db.SmallInt
+  vin                 String              @db.VarChar(17)
+  insurance_expiry_ts DateTime            @db.Timestamp(6)
+  users               users               @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_transports_users")
+  transport_types     transport_types     @relation(fields: [type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_transports_transport_types")
+  orders_transports   orders_transports[]
+  vehicle_parameters  vehicle_parameters?
+}
+
+model users {
+  id                    BigInt                  @id(map: "PK_users") @default(autoincrement())
+  first_name            String                  @db.VarChar(50)
+  last_name             String                  @db.VarChar(50)
+  email                 String                  @db.VarChar(255)
+  password_hash         String                  @db.VarChar(24)
+  created_at            DateTime                @db.Timestamp(6)
+  updated_at            DateTime                @db.Timestamp(6)
+  user_ratings          Decimal                 @db.Decimal(3, 2)
+  role_id               Int                     @db.SmallInt
+  roles                 roles                   @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_users_roles")
+  orders                orders[]
+  transport_application transport_application[]
+  transports            transports[]
+}
+
+model vehicle_parameters {
+  vehicle_id BigInt     @id(map: "PK_vehicle_parameters") @default(autoincrement())
+  width      Int        @db.SmallInt
+  height     Int        @db.SmallInt
+  length     Int        @db.SmallInt
+  capacity   Int        @db.SmallInt
+  mileage    Int        @db.SmallInt
+  transports transports @relation(fields: [vehicle_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_vehicle_parameters_transports")
 }
