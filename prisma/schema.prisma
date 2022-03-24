@@ -7,137 +7,137 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model cargos {
-  id       BigInt @id(map: "PK_cargos") @default(autoincrement())
+model Cargo {
+  id       BigInt @id(map: "PK_Cargo") @default(autoincrement())
   weight   Int    @db.SmallInt
   length   Int    @db.SmallInt
   width    Int    @db.SmallInt
   height   Int    @db.SmallInt
   name     String @db.VarChar(50)
-  order_id BigInt
-  orders   orders @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cargos_orders")
+  orderId  BigInt
+  order    Order @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Cargo_Order")
 }
 
-model cities {
-  id        Int         @id(map: "PK_cities") @default(autoincrement()) @db.SmallInt
+model City {
+  id        Int         @id(map: "PK_City") @default(autoincrement()) @db.SmallInt
   name      String      @db.VarChar(50)
-  locations locations[]
+  locations Location[]
 }
 
-model driver_application {
-  id           BigInt @id(map: "PK_dirver_application") @default(autoincrement())
-  first_name   String @db.VarChar(50)
-  last_name    String @db.VarChar(50)
-  phone_number String @db.VarChar(15)
+model DriverApplication {
+  id           BigInt @id(map: "PK_driver_application") @default(autoincrement())
+  firstName    String @db.VarChar(50)
+  lastName     String @db.VarChar(50)
+  phoneNumber  String @db.VarChar(15)
   email        String @db.VarChar(255)
 }
 
-model locations {
-  id                                     BigInt   @id(map: "PK_locations") @default(autoincrement())
-  city_id                                Int      @db.SmallInt
-  street_id                              Int      @db.SmallInt
+model Location {
+  id                                     BigInt   @id(map: "PK_Location") @default(autoincrement())
+  cityId                                 Int      @db.SmallInt
+  streetId                               Int      @db.SmallInt
   home                                   Int      @db.SmallInt
-  cities                                 cities   @relation(fields: [city_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_locations_cities")
-  streets                                streets  @relation(fields: [street_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_locations_streets")
-  orders_locationsToorders_from_location orders[] @relation("locationsToorders_from_location")
-  orders_locationsToorders_to_location   orders[] @relation("locationsToorders_to_location")
+  city                                   City   @relation(fields: [cityId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Location_City")
+  street                                 Street  @relation(fields: [streetId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Location_Street")
+  orders_locationsToorders_fromLocation  Order[] @relation("locationsToorders_fromLocation")
+  orders_locationsToorders_toLocation    Order[] @relation("locationsToorders_toLocation")
 }
 
-model orders {
-  id                                        BigInt              @id(map: "PK_orders") @default(autoincrement())
-  created_at                                DateTime            @db.Timestamp(6)
-  updated_at                                DateTime            @db.Timestamp(6)
-  owner_id                                  BigInt
-  from_location                             BigInt
-  to_location                               BigInt
-  status_id                                 Int                 @db.SmallInt
-  locations_locationsToorders_from_location locations           @relation("locationsToorders_from_location", fields: [from_location], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_from")
-  users                                     users               @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_users")
-  statuses                                  statuses            @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_statuses")
-  locations_locationsToorders_to_location   locations           @relation("locationsToorders_to_location", fields: [to_location], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_to")
-  cargos                                    cargos[]
-  orders_transports                         orders_transports[]
+model Order {
+  id                                        BigInt              @id(map: "PK_Order") @default(autoincrement())
+  createdAt                                 DateTime            @db.Timestamp(6)
+  updatedAt                                 DateTime            @db.Timestamp(6)
+  ownerId                                   BigInt
+  fromLocation                              BigInt
+  toLocation                                BigInt
+  statusId                                  Int                @db.SmallInt
+  locations_locationsToorders_fromLocation  Location           @relation("locationsToorders_fromLocation", fields: [fromLocation], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_from")
+  users                                     User               @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_User")
+  status                                    OrderStatus        @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_OrderStatus")
+  locations_locationsToorders_toLocation    Location           @relation("locationsToorders_toLocation", fields: [toLocation], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_to")
+  cargos                                    Cargo[]
+  orderTransports                           OrderTransport[]
 }
 
-model orders_transports {
-  order_id        BigInt
-  transport_id    BigInt
-  actual_distance Int        @db.SmallInt
-  orders          orders     @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_transports_orders")
-  transports      transports @relation(fields: [transport_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_transports_transports")
+model OrderTransport {
+  orderId        BigInt
+  transportId    BigInt
+  actualDistance Int        @db.SmallInt
+  order          Order     @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_OrderTransport_orders")
+  transport      Vehicle @relation(fields: [transportId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_OrderTransport_transports")
 
-  @@id([order_id, transport_id], map: "PK_orders_transports")
+  @@id([orderId, transportId], map: "PK_OrderTransport")
 }
 
-model roles {
-  id    Int     @id(map: "PK_roles") @default(autoincrement()) @db.SmallInt
+model Role {
+  id    Int     @id(map: "PK_Role") @default(autoincrement()) @db.SmallInt
   name  String  @db.VarChar(50)
-  users users[]
+  users User[]
 }
 
-model statuses {
-  id          Int      @id(map: "PK_statuses") @default(autoincrement()) @db.SmallInt
-  status_name String   @db.VarChar(50)
-  orders      orders[]
+model OrderStatus {
+  id          Int      @id(map: "PK_OrderStatus") @default(autoincrement()) @db.SmallInt
+  statusName String   @db.VarChar(50)
+  orders      Order[]
 }
 
-model streets {
-  id        Int         @id(map: "PK_streets") @default(autoincrement()) @db.SmallInt
+model Street {
+  id        Int         @id(map: "PK_Street") @default(autoincrement()) @db.SmallInt
   name      String      @db.VarChar(50)
-  locations locations[]
+  locations Location[]
 }
 
-model transport_application {
-  id            BigInt @id(map: "PK_transport_application") @default(autoincrement())
-  driver_id     BigInt
-  document_uuid String @db.Uuid
-  users         users  @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_transport_application_users")
+model TransportApplication {
+  id            BigInt @id(map: "PK_TransportApplication") @default(autoincrement())
+  driverId     BigInt
+  documentUid String @db.Uuid
+  users         User  @relation(fields: [driverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_TransportApplication_User")
 }
 
-model transport_types {
-  id         Int          @id(map: "PK_transport_types") @default(autoincrement()) @db.SmallInt
-  type_name  String       @db.VarChar(50)
-  transports transports[]
+model TransportType {
+  id         Int          @id(map: "PK_TransportType") @default(autoincrement()) @db.SmallInt
+  typeName  String       @db.VarChar(50)
+  transports Vehicle[]
 }
 
-model transports {
-  id                  BigInt              @id(map: "PK_transports") @default(autoincrement())
-  year_of_production  DateTime            @db.Date
+model Vehicle {
+  id                  BigInt              @id(map: "PK_Vehicles") @default(autoincrement())
+  yearOfProduction  DateTime            @db.Date
   brand               String              @db.VarChar(50)
   model               String              @db.VarChar(50)
-  registration_number String              @db.VarChar(7)
-  driver_id           BigInt
-  type_id             Int                 @db.SmallInt
+  registrationNumber String              @db.VarChar(7)
+  driverId           BigInt
+  typeId             Int                 @db.SmallInt
   vin                 String              @db.VarChar(17)
-  insurance_expiry_ts DateTime            @db.Timestamp(6)
-  users               users               @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_transports_users")
-  transport_types     transport_types     @relation(fields: [type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_transports_transport_types")
-  orders_transports   orders_transports[]
-  vehicle_parameters  vehicle_parameters?
+  insuranceExpiryTs DateTime            @db.Timestamp(6)
+  user               User               @relation(fields: [driverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Vehicle_User")
+  transportType     TransportType     @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Transport_TransportType")
+  orderTransports   OrderTransport[]
+  VehicleParameters  VehicleParameters?
 }
 
-model users {
-  id                    BigInt                  @id(map: "PK_users") @default(autoincrement())
-  first_name            String                  @db.VarChar(50)
-  last_name             String                  @db.VarChar(50)
+model User {
+  id                    BigInt                  @id(map: "PK_User") @default(autoincrement())
+  firstName            String                  @db.VarChar(50)
+  lastName             String                  @db.VarChar(50)
   email                 String                  @db.VarChar(255)
-  password_hash         String                  @db.VarChar(24)
-  created_at            DateTime                @db.Timestamp(6)
-  updated_at            DateTime                @db.Timestamp(6)
-  user_ratings          Decimal                 @db.Decimal(3, 2)
-  role_id               Int                     @db.SmallInt
-  roles                 roles                   @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_users_roles")
-  orders                orders[]
-  transport_application transport_application[]
-  transports            transports[]
+  passwordHash         String                  @db.VarChar(24)
+  createdAt            DateTime                @db.Timestamp(6)
+  updatedAt            DateTime                @db.Timestamp(6)
+  userRating          Decimal                 @db.Decimal(3, 2)
+  roleId               Int                     @db.SmallInt
+  role                 Role                   @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_User_Role")
+  orders                Order[]
+  transportApplication TransportApplication[]
+  transports            Vehicle[]
 }
 
-model vehicle_parameters {
-  vehicle_id BigInt     @id(map: "PK_vehicle_parameters") @default(autoincrement())
+model VehicleParameters {
+  vehicleId BigInt     @id(map: "PK_VehicleParameters") @default(autoincrement())
   width      Int        @db.SmallInt
   height     Int        @db.SmallInt
   length     Int        @db.SmallInt
   capacity   Int        @db.SmallInt
   mileage    Int        @db.SmallInt
-  transports transports @relation(fields: [vehicle_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_vehicle_parameters_transports")
+  transport Vehicle @relation(fields: [vehicleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_VehicleParameters_Vehicle")
 }
