@@ -8,17 +8,18 @@ export class TransportApplicationService {
 
   getPendingTransportApplications(): Promise<any[]> {
     return this.prismaService.transportApplication.findMany({
-      where: {
-        status: TransportApplicationStatus.PENDING,
-      },
-      include: {
-        user: {
+      select: {
+        id: true,
+        documentUid: true,
+        driver: {
           select: {
-            id: true,
             firstName: true,
             lastName: true,
           },
         },
+      },
+      where: {
+        status: TransportApplicationStatus.PENDING,
       },
     });
   }
