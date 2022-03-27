@@ -12,4 +12,18 @@ export class DriverApplicationService {
       },
     });
   }
+
+  async approveApplication(id: number) {
+    return this.prismaService.driverApplication.update({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+      },
+      data: {
+        isApplicationApproved: true,
+      },
+    });
+  }
 }

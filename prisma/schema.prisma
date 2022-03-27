@@ -49,15 +49,19 @@ model Order {
   createdAt                                 DateTime            @db.Timestamp(6)
   updatedAt                                 DateTime            @db.Timestamp(6)
   ownerId                                   Int
-  fromLocation                              Int
-  toLocation                                Int
-  statusId                                  Int                 @db.SmallInt
-  locations_locationsToorders_fromLocation  Location            @relation("locationsToorders_fromLocation", fields: [fromLocation], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_from")
-  users                                     User                @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_User")
-  status                                    OrderStatus         @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_OrderStatus")
-  locations_locationsToorders_toLocation    Location            @relation("locationsToorders_toLocation", fields: [toLocation], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_to")
+  fromLocationId                              Int
+  toLocationId                                Int
+  fromLocation  Location            @relation("locationsToorders_fromLocation", fields: [fromLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_from")
+  user                                     User                @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_User")
+  status                                    OrderStatus     @default(PENDING)
+  toLocation    Location            @relation("locationsToorders_toLocation", fields: [toLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_to")
   cargos                                    Cargo[]
   orderTransports                           OrderTransport[]
+}
+
+enum OrderStatus {
+    PENDING
+    APPROVED
 }
 
 model OrderTransport {
@@ -70,16 +74,8 @@ model OrderTransport {
   @@id([orderId, transportId], map: "PK_OrderTransport")
 }
 
-model Role {
-  id    Int     @id(map: "PK_Role") @default(autoincrement()) @db.SmallInt
-  name  String  @db.VarChar(50)
-  users User[]
-}
-
-model OrderStatus {
-  id          Int      @id(map: "PK_OrderStatus") @default(autoincrement()) @db.SmallInt
-  statusName  String   @db.VarChar(50)
-  orders      Order[]
+enum Role {
+    USER
 }
 
 model Street {
@@ -133,9 +129,8 @@ model User {
   createdAt            DateTime                @db.Timestamp(6)
   updatedAt            DateTime                @db.Timestamp(6)
   userRating           Decimal                 @db.Decimal(3, 2)
-  roleId               Int                     @db.SmallInt
   isActive             Boolean                 @default(true)
-  role                 Role                    @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_User_Role")
+  role                 Role                    @default(USER)
   orders               Order[]
   transportApplication TransportApplication[]
   transports           Vehicle[]

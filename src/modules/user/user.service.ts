@@ -18,4 +18,26 @@ export class UserService {
       },
     });
   }
+
+  async blockUser(id: number) {
+    return this.changeUserActivity(id, false);
+  }
+
+  async activateUser(id: number) {
+    return this.changeUserActivity(id, true);
+  }
+
+  private changeUserActivity(id: number, isActive: boolean) {
+    return this.prismaService.user.update({
+      select: {
+        id: true,
+      },
+      where: {
+        id,
+      },
+      data: {
+        isActive,
+      },
+    });
+  }
 }

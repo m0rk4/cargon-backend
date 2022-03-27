@@ -4,10 +4,9 @@ import { TransportApplicationStatus } from '@prisma/client';
 
 @Injectable()
 export class TransportApplicationService {
-  constructor(private prismaService: PrismaService) {
-  }
+  constructor(private prismaService: PrismaService) {}
 
-  getPendingTransportApplications(): Promise<any[]> {
+  getPendingTransportApplications() {
     return this.prismaService.transportApplication.findMany({
       select: {
         id: true,
@@ -26,15 +25,25 @@ export class TransportApplicationService {
   }
 
   approveTransportApplication(id: number) {
-    return this.changeTransportApplicationStatus(id, TransportApplicationStatus.APPROVED);
+    return this.changeTransportApplicationStatus(
+      id,
+      TransportApplicationStatus.APPROVED,
+    );
   }
 
   rejectTransportApplication(id: number) {
-    return this.changeTransportApplicationStatus(id, TransportApplicationStatus.CANCELLED);
+    return this.changeTransportApplicationStatus(
+      id,
+      TransportApplicationStatus.CANCELLED,
+    );
   }
 
-  private changeTransportApplicationStatus(id: number, status: TransportApplicationStatus) {
+  private changeTransportApplicationStatus(
+    id: number,
+    status: TransportApplicationStatus,
+  ) {
     return this.prismaService.transportApplication.update({
+      select: { id: true },
       where: { id },
       data: { status },
     });
