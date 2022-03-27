@@ -1,115 +1,15 @@
-/*
-  Warnings:
-
-  - You are about to drop the `cargos` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `cities` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `driver_application` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `locations` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `orders` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `orders_transports` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `roles` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `statuses` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `streets` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `transport_application` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `transport_types` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `transports` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `users` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `vehicle_parameters` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropForeignKey
-ALTER TABLE "cargos" DROP CONSTRAINT "FK_cargos_orders";
-
--- DropForeignKey
-ALTER TABLE "locations" DROP CONSTRAINT "FK_locations_cities";
-
--- DropForeignKey
-ALTER TABLE "locations" DROP CONSTRAINT "FK_locations_streets";
-
--- DropForeignKey
-ALTER TABLE "orders" DROP CONSTRAINT "FK_orders_locations_from";
-
--- DropForeignKey
-ALTER TABLE "orders" DROP CONSTRAINT "FK_orders_users";
-
--- DropForeignKey
-ALTER TABLE "orders" DROP CONSTRAINT "FK_orders_statuses";
-
--- DropForeignKey
-ALTER TABLE "orders" DROP CONSTRAINT "FK_orders_locations_to";
-
--- DropForeignKey
-ALTER TABLE "orders_transports" DROP CONSTRAINT "FK_orders_transports_orders";
-
--- DropForeignKey
-ALTER TABLE "orders_transports" DROP CONSTRAINT "FK_orders_transports_transports";
-
--- DropForeignKey
-ALTER TABLE "transport_application" DROP CONSTRAINT "FK_transport_application_users";
-
--- DropForeignKey
-ALTER TABLE "transports" DROP CONSTRAINT "FK_transports_users";
-
--- DropForeignKey
-ALTER TABLE "transports" DROP CONSTRAINT "FK_transports_transport_types";
-
--- DropForeignKey
-ALTER TABLE "users" DROP CONSTRAINT "FK_users_roles";
-
--- DropForeignKey
-ALTER TABLE "vehicle_parameters" DROP CONSTRAINT "FK_vehicle_parameters_transports";
-
--- DropTable
-DROP TABLE "cargos";
-
--- DropTable
-DROP TABLE "cities";
-
--- DropTable
-DROP TABLE "driver_application";
-
--- DropTable
-DROP TABLE "locations";
-
--- DropTable
-DROP TABLE "orders";
-
--- DropTable
-DROP TABLE "orders_transports";
-
--- DropTable
-DROP TABLE "roles";
-
--- DropTable
-DROP TABLE "statuses";
-
--- DropTable
-DROP TABLE "streets";
-
--- DropTable
-DROP TABLE "transport_application";
-
--- DropTable
-DROP TABLE "transport_types";
-
--- DropTable
-DROP TABLE "transports";
-
--- DropTable
-DROP TABLE "users";
-
--- DropTable
-DROP TABLE "vehicle_parameters";
+-- CreateEnum
+CREATE TYPE "TransportApplicationStatus" AS ENUM ('PENDING', 'CANCELLED', 'APPROVED');
 
 -- CreateTable
 CREATE TABLE "Cargo" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "weight" SMALLINT NOT NULL,
     "length" SMALLINT NOT NULL,
     "width" SMALLINT NOT NULL,
     "height" SMALLINT NOT NULL,
     "name" VARCHAR(50) NOT NULL,
-    "orderId" BIGINT NOT NULL,
+    "orderId" INTEGER NOT NULL,
 
     CONSTRAINT "PK_Cargo" PRIMARY KEY ("id")
 );
@@ -124,7 +24,7 @@ CREATE TABLE "City" (
 
 -- CreateTable
 CREATE TABLE "DriverApplication" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "firstName" VARCHAR(50) NOT NULL,
     "lastName" VARCHAR(50) NOT NULL,
     "phoneNumber" VARCHAR(15) NOT NULL,
@@ -135,7 +35,7 @@ CREATE TABLE "DriverApplication" (
 
 -- CreateTable
 CREATE TABLE "Location" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "cityId" SMALLINT NOT NULL,
     "streetId" SMALLINT NOT NULL,
     "home" SMALLINT NOT NULL,
@@ -145,12 +45,12 @@ CREATE TABLE "Location" (
 
 -- CreateTable
 CREATE TABLE "Order" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(6) NOT NULL,
     "updatedAt" TIMESTAMP(6) NOT NULL,
-    "ownerId" BIGINT NOT NULL,
-    "fromLocation" BIGINT NOT NULL,
-    "toLocation" BIGINT NOT NULL,
+    "ownerId" INTEGER NOT NULL,
+    "fromLocation" INTEGER NOT NULL,
+    "toLocation" INTEGER NOT NULL,
     "statusId" SMALLINT NOT NULL,
 
     CONSTRAINT "PK_Order" PRIMARY KEY ("id")
@@ -158,8 +58,8 @@ CREATE TABLE "Order" (
 
 -- CreateTable
 CREATE TABLE "OrderTransport" (
-    "orderId" BIGINT NOT NULL,
-    "transportId" BIGINT NOT NULL,
+    "orderId" INTEGER NOT NULL,
+    "transportId" INTEGER NOT NULL,
     "actualDistance" SMALLINT NOT NULL,
 
     CONSTRAINT "PK_OrderTransport" PRIMARY KEY ("orderId","transportId")
@@ -191,9 +91,10 @@ CREATE TABLE "Street" (
 
 -- CreateTable
 CREATE TABLE "TransportApplication" (
-    "id" BIGSERIAL NOT NULL,
-    "driverId" BIGINT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "driverId" INTEGER NOT NULL,
     "documentUid" UUID NOT NULL,
+    "status" "TransportApplicationStatus" NOT NULL DEFAULT E'PENDING',
 
     CONSTRAINT "PK_TransportApplication" PRIMARY KEY ("id")
 );
@@ -208,12 +109,12 @@ CREATE TABLE "TransportType" (
 
 -- CreateTable
 CREATE TABLE "Vehicle" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "yearOfProduction" DATE NOT NULL,
     "brand" VARCHAR(50) NOT NULL,
     "model" VARCHAR(50) NOT NULL,
     "registrationNumber" VARCHAR(7) NOT NULL,
-    "driverId" BIGINT NOT NULL,
+    "driverId" INTEGER NOT NULL,
     "typeId" SMALLINT NOT NULL,
     "vin" VARCHAR(17) NOT NULL,
     "insuranceExpiryTs" TIMESTAMP(6) NOT NULL,
@@ -223,7 +124,7 @@ CREATE TABLE "Vehicle" (
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "firstName" VARCHAR(50) NOT NULL,
     "lastName" VARCHAR(50) NOT NULL,
     "email" VARCHAR(255) NOT NULL,
@@ -238,7 +139,7 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "VehicleParameters" (
-    "vehicleId" BIGSERIAL NOT NULL,
+    "vehicleId" SERIAL NOT NULL,
     "width" SMALLINT NOT NULL,
     "height" SMALLINT NOT NULL,
     "length" SMALLINT NOT NULL,
