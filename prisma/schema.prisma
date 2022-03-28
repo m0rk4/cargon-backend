@@ -25,12 +25,14 @@ model City {
 }
 
 model DriverApplication {
-  id                    Int     @id(map: "PK_driver_application") @default(autoincrement())
-  firstName             String  @db.VarChar(50)
-  lastName              String  @db.VarChar(50)
-  phoneNumber           String  @db.VarChar(15)
-  email                 String  @db.VarChar(255)
-  isApplicationApproved Boolean @default(false)
+  id                    Int       @id(map: "PK_driver_application") @default(autoincrement())
+  firstName             String    @db.VarChar(50)
+  lastName              String    @db.VarChar(50)
+  phoneNumber           String    @db.VarChar(15)
+  email                 String    @db.VarChar(255)
+  isApplicationApproved Boolean   @default(false)
+  createdAt             DateTime  @db.Timestamp(6) @default(now())
+  updatedAt             DateTime  @db.Timestamp(6) @default(now())
 }
 
 model Location {
@@ -46,8 +48,8 @@ model Location {
 
 model Order {
   id                                        Int                 @id(map: "PK_Order") @default(autoincrement())
-  createdAt                                 DateTime            @db.Timestamp(6)
-  updatedAt                                 DateTime            @db.Timestamp(6)
+  createdAt                                 DateTime            @db.Timestamp(6) @default(now())
+  updatedAt                                 DateTime            @db.Timestamp(6) @default(now())
   ownerId                                   Int
   fromLocationId                              Int
   toLocationId                                Int
@@ -90,6 +92,8 @@ model TransportApplication {
   documentUid   String                      @db.Uuid
   driver        User                        @relation(fields: [driverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_TransportApplication_User")
   status        TransportApplicationStatus  @default(PENDING)
+  createdAt     DateTime  @db.Timestamp(6)  @default(now())
+  updatedAt     DateTime  @db.Timestamp(6)  @default(now())
 }
 
 enum TransportApplicationStatus {
@@ -124,11 +128,11 @@ model User {
   id                   Int                     @id(map: "PK_User") @default(autoincrement())
   firstName            String                  @db.VarChar(50)
   lastName             String                  @db.VarChar(50)
-  email                String                  @db.VarChar(255)
+  email                String                  @db.VarChar(255)    @unique
   passwordHash         String                  @db.VarChar(24)
-  createdAt            DateTime                @db.Timestamp(6)
-  updatedAt            DateTime                @db.Timestamp(6)
-  userRating           Decimal                 @db.Decimal(3, 2)
+  createdAt            DateTime                @db.Timestamp(6)    @default(now())
+  updatedAt            DateTime                @db.Timestamp(6)    @default(now())
+  userRating           Decimal                 @db.Decimal(3, 2)   @default(5.00)
   isActive             Boolean                 @default(true)
   role                 Role                    @default(USER)
   orders               Order[]
