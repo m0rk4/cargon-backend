@@ -20,17 +20,19 @@ model Cargo {
 
 model City {
   id        Int         @id(map: "PK_City") @default(autoincrement()) @db.SmallInt
-  name      String      @db.VarChar(50)
+  name      String      @db.VarChar(50) @unique
   locations Location[]
 }
 
 model DriverApplication {
-  id                    Int     @id(map: "PK_driver_application") @default(autoincrement())
-  firstName             String  @db.VarChar(50)
-  lastName              String  @db.VarChar(50)
-  phoneNumber           String  @db.VarChar(15)
-  email                 String  @db.VarChar(255)
-  isApplicationApproved Boolean @default(false)
+  id                    Int       @id(map: "PK_driver_application") @default(autoincrement())
+  firstName             String    @db.VarChar(50)
+  lastName              String    @db.VarChar(50)
+  phoneNumber           String    @db.VarChar(15)
+  email                 String    @db.VarChar(255)
+  isApplicationApproved Boolean   @default(false)
+  createdAt             DateTime  @db.Timestamp(6) @default(now())
+  updatedAt             DateTime  @db.Timestamp(6) @default(now()) @updatedAt
 }
 
 model Location {
@@ -42,26 +44,29 @@ model Location {
   street                                 Street   @relation(fields: [streetId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Location_Street")
   orders_locationsToorders_fromLocation  Order[]  @relation("locationsToorders_fromLocation")
   orders_locationsToorders_toLocation    Order[]  @relation("locationsToorders_toLocation")
+
+  @@unique([cityId, streetId, home], name: "UNQ_Location")
 }
 
 model Order {
-  id                                        Int                 @id(map: "PK_Order") @default(autoincrement())
-  createdAt                                 DateTime            @db.Timestamp(6)
-  updatedAt                                 DateTime            @db.Timestamp(6)
-  ownerId                                   Int
-  fromLocationId                              Int
-  toLocationId                                Int
-  fromLocation  Location            @relation("locationsToorders_fromLocation", fields: [fromLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_from")
-  user                                     User                @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_User")
-  status                                    OrderStatus     @default(PENDING)
-  toLocation    Location            @relation("locationsToorders_toLocation", fields: [toLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_to")
-  cargos                                    Cargo[]
-  orderTransports                           OrderTransport[]
+  id               Int              @id(map: "PK_Order") @default(autoincrement())
+  createdAt        DateTime         @db.Timestamp(6) @default(now())
+  updatedAt        DateTime         @db.Timestamp(6) @default(now()) @updatedAt
+  ownerId          Int
+  fromLocationId   Int
+  toLocationId     Int
+  fromLocation     Location          @relation("locationsToorders_fromLocation", fields: [fromLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_from")
+  user             User              @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_User")
+  status           OrderStatus       @default(PENDING)
+  toLocation       Location          @relation("locationsToorders_toLocation", fields: [toLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_to")
+  cargos           Cargo[]
+  orderTransports  OrderTransport[]
 }
 
 enum OrderStatus {
     PENDING
     APPROVED
+    DECLINED
 }
 
 model OrderTransport {
@@ -80,7 +85,7 @@ enum Role {
 
 model Street {
   id        Int         @id(map: "PK_Street") @default(autoincrement()) @db.SmallInt
-  name      String      @db.VarChar(50)
+  name      String      @db.VarChar(50) @unique
   locations Location[]
 }
 
@@ -90,6 +95,8 @@ model TransportApplication {
   documentUid   String                      @db.Uuid
   driver        User                        @relation(fields: [driverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_TransportApplication_User")
   status        TransportApplicationStatus  @default(PENDING)
+  createdAt     DateTime  @db.Timestamp(6)  @default(now())
+  updatedAt     DateTime  @db.Timestamp(6)  @default(now()) @updatedAt
 }
 
 enum TransportApplicationStatus {
@@ -124,11 +131,11 @@ model User {
   id                   Int                     @id(map: "PK_User") @default(autoincrement())
   firstName            String                  @db.VarChar(50)
   lastName             String                  @db.VarChar(50)
-  email                String                  @db.VarChar(255)
+  email                String                  @db.VarChar(255)    @unique
   passwordHash         String                  @db.VarChar(24)
-  createdAt            DateTime                @db.Timestamp(6)
-  updatedAt            DateTime                @db.Timestamp(6)
-  userRating           Decimal                 @db.Decimal(3, 2)
+  createdAt            DateTime                @db.Timestamp(6)    @default(now())
+  updatedAt            DateTime                @db.Timestamp(6)    @default(now()) @updatedAt
+  userRating           Decimal                 @db.Decimal(3, 2)   @default(5.00)
   isActive             Boolean                 @default(true)
   role                 Role                    @default(USER)
   orders               Order[]
@@ -143,5 +150,5 @@ model VehicleParameters {
   length     Int        @db.SmallInt
   capacity   Int        @db.SmallInt
   mileage    Int        @db.SmallInt
-  transport  Vehicle @relation(fields: [vehicleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_VehicleParameters_Vehicle")
+  transport  Vehicle    @relation(fields: [vehicleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_VehicleParameters_Vehicle")
 }
