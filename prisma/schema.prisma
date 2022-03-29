@@ -64,6 +64,7 @@ model Order {
 enum OrderStatus {
     PENDING
     APPROVED
+    DECLINED
 }
 
 model OrderTransport {
