@@ -3,6 +3,7 @@ import { TransportApplicationModule } from './modules/transport-appication/trans
 import { DriverApplicationModule } from './modules/driver-application/driver-application.module';
 import { UserModule } from './modules/user/user.module';
 import { OrderModule } from './modules/order/order.module';
+import { LocationModule } from './modules/location/location.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { OrderModule } from './modules/order/order.module';
     DriverApplicationModule,
     UserModule,
     OrderModule,
+    LocationModule,
   ],
   controllers: [],
   providers: [],
