@@ -40,7 +40,7 @@ export class UserController {
     return this.userService.updateUser(+id, updateUserDto);
   }
 
-  @Post('register')
+  @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
