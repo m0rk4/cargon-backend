@@ -32,7 +32,7 @@ model DriverApplication {
   email                 String    @db.VarChar(255)
   isApplicationApproved Boolean   @default(false)
   createdAt             DateTime  @db.Timestamp(6) @default(now())
-  updatedAt             DateTime  @db.Timestamp(6) @default(now())
+  updatedAt             DateTime  @db.Timestamp(6) @default(now()) @updatedAt
 }
 
 model Location {
@@ -47,18 +47,18 @@ model Location {
 }
 
 model Order {
-  id                                        Int                 @id(map: "PK_Order") @default(autoincrement())
-  createdAt                                 DateTime            @db.Timestamp(6) @default(now())
-  updatedAt                                 DateTime            @db.Timestamp(6) @default(now())
-  ownerId                                   Int
-  fromLocationId                              Int
-  toLocationId                                Int
-  fromLocation  Location            @relation("locationsToorders_fromLocation", fields: [fromLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_from")
-  user                                     User                @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_User")
-  status                                    OrderStatus     @default(PENDING)
-  toLocation    Location            @relation("locationsToorders_toLocation", fields: [toLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_to")
-  cargos                                    Cargo[]
-  orderTransports                           OrderTransport[]
+  id               Int              @id(map: "PK_Order") @default(autoincrement())
+  createdAt        DateTime         @db.Timestamp(6) @default(now())
+  updatedAt        DateTime         @db.Timestamp(6) @default(now()) @updatedAt
+  ownerId          Int
+  fromLocationId   Int
+  toLocationId     Int
+  fromLocation     Location          @relation("locationsToorders_fromLocation", fields: [fromLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_from")
+  user             User              @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_User")
+  status           OrderStatus       @default(PENDING)
+  toLocation       Location          @relation("locationsToorders_toLocation", fields: [toLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_to")
+  cargos           Cargo[]
+  orderTransports  OrderTransport[]
 }
 
 enum OrderStatus {
@@ -94,7 +94,7 @@ model TransportApplication {
   driver        User                        @relation(fields: [driverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_TransportApplication_User")
   status        TransportApplicationStatus  @default(PENDING)
   createdAt     DateTime  @db.Timestamp(6)  @default(now())
-  updatedAt     DateTime  @db.Timestamp(6)  @default(now())
+  updatedAt     DateTime  @db.Timestamp(6)  @default(now()) @updatedAt
 }
 
 enum TransportApplicationStatus {
@@ -132,7 +132,7 @@ model User {
   email                String                  @db.VarChar(255)    @unique
   passwordHash         String                  @db.VarChar(24)
   createdAt            DateTime                @db.Timestamp(6)    @default(now())
-  updatedAt            DateTime                @db.Timestamp(6)    @default(now())
+  updatedAt            DateTime                @db.Timestamp(6)    @default(now()) @updatedAt
   userRating           Decimal                 @db.Decimal(3, 2)   @default(5.00)
   isActive             Boolean                 @default(true)
   role                 Role                    @default(USER)
@@ -148,5 +148,5 @@ model VehicleParameters {
   length     Int        @db.SmallInt
   capacity   Int        @db.SmallInt
   mileage    Int        @db.SmallInt
-  transport  Vehicle @relation(fields: [vehicleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_VehicleParameters_Vehicle")
+  transport  Vehicle    @relation(fields: [vehicleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_VehicleParameters_Vehicle")
 }
