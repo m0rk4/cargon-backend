@@ -20,7 +20,7 @@ model Cargo {
 
 model City {
   id        Int         @id(map: "PK_City") @default(autoincrement()) @db.SmallInt
-  name      String      @db.VarChar(50)
+  name      String      @db.VarChar(50) @unique
   locations Location[]
 }
 
@@ -44,6 +44,8 @@ model Location {
   street                                 Street   @relation(fields: [streetId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Location_Street")
   orders_locationsToorders_fromLocation  Order[]  @relation("locationsToorders_fromLocation")
   orders_locationsToorders_toLocation    Order[]  @relation("locationsToorders_toLocation")
+
+  @@unique([cityId, streetId, home], name: "UNQ_Location")
 }
 
 model Order {
@@ -83,7 +85,7 @@ enum Role {
 
 model Street {
   id        Int         @id(map: "PK_Street") @default(autoincrement()) @db.SmallInt
-  name      String      @db.VarChar(50)
+  name      String      @db.VarChar(50) @unique
   locations Location[]
 }
 
