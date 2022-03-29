@@ -32,7 +32,7 @@ export class UserController {
     return this.userService.activateUser(+id);
   }
 
-  @Put(':id/update')
+  @Put(':id')
   async updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
