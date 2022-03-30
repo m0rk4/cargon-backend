@@ -5,6 +5,7 @@ import { UserModule } from './modules/user/user.module';
 import { OrderModule } from './modules/order/order.module';
 import { LocationModule } from './modules/location/location.module';
 import { ConfigModule } from '@nestjs/config';
+import { CargoModule } from './modules/cargo/cargo.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ConfigModule } from '@nestjs/config';
     UserModule,
     OrderModule,
     LocationModule,
+    CargoModule,
   ],
   controllers: [],
   providers: [],
