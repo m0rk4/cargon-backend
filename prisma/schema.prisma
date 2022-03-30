@@ -90,13 +90,13 @@ model Street {
 }
 
 model TransportApplication {
-  id            Int                         @id(map: "PK_TransportApplication") @default(autoincrement())
-  driverId      Int
-  documentUid   String                      @db.Uuid
-  driver        User                        @relation(fields: [driverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_TransportApplication_User")
-  status        TransportApplicationStatus  @default(PENDING)
-  createdAt     DateTime  @db.Timestamp(6)  @default(now())
-  updatedAt     DateTime  @db.Timestamp(6)  @default(now()) @updatedAt
+  id                    Int                         @id(map: "PK_TransportApplication") @default(autoincrement())
+  driverId              Int
+  documentPublicId      String                      @db.VarChar(255)
+  driver                User                        @relation(fields: [driverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_TransportApplication_User")
+  status                TransportApplicationStatus  @default(PENDING)
+  createdAt             DateTime  @db.Timestamp(6)  @default(now())
+  updatedAt             DateTime  @db.Timestamp(6)  @default(now()) @updatedAt
 }
 
 enum TransportApplicationStatus {
