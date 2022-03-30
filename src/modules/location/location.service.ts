@@ -16,11 +16,11 @@ export class LocationService {
 
   async getOrCreateLocation(data: CreateLocationDto) {
     const streetId: number =
-      data.streetId ||
-      (await this.createStreet(data.street).then((res) => res['id']));
+      data.street.id ||
+      (await this.createStreet(data.street.name).then((res) => res['id']));
     const cityId: number =
-      data.cityId ||
-      (await this.createCity(data.city).then((res) => res['id']));
+      data.city.id ||
+      (await this.createCity(data.city.name).then((res) => res['id']));
     const query = {
       cityId,
       streetId,
