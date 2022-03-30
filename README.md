@@ -15,14 +15,17 @@ $ docker-compose -f docker-compose-local.yml up -d postgres
 
 ## Setup DB (Apply Prisma migrations)
 ```bash
-$ npx prisma migrate dev --name init 
+$ prisma migrate deploy
 ```
 If you want to update the database structure, apply changes to `prisma.schema`
 then run
 ```bash
-$ npx prisma migrate dev --name init 
+$ prisma migrate dev --name init 
 ```
-
+To clear the database and fill it with the test data run
+```bash
+$ prisma migrate reset 
+```
 ## Running the app
 
 ```bash
