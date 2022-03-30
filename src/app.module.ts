@@ -4,9 +4,11 @@ import { DriverApplicationModule } from './modules/driver-application/driver-app
 import { UserModule } from './modules/user/user.module';
 import { OrderModule } from './modules/order/order.module';
 import { LocationModule } from './modules/location/location.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TransportApplicationModule,
     DriverApplicationModule,
     UserModule,
