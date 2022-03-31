@@ -7,9 +7,9 @@ import { UpdateOrderDto } from './model/update-order-dto.interface';
 export class OrderController {
   constructor(private orderService: OrderService) {}
 
-  @Get('not-approved')
-  async getNotApprovedOrders() {
-    return this.orderService.getNotApprovedOrders();
+  @Get('pending')
+  async getPendingOrders() {
+    return this.orderService.getPendingOrders();
   }
 
   @Get('user-orders/:user_id')

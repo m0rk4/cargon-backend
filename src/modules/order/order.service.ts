@@ -62,7 +62,7 @@ export class OrderService {
     return order;
   }
 
-  async getNotApprovedOrders() {
+  async getPendingOrders() {
     return this.prismaService.order.findMany({
       select: this.orderInfo,
       where: {
