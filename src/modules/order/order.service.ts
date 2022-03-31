@@ -71,10 +71,26 @@ export class OrderService {
     });
   }
 
+  async getApprovedOrders() {
+    return this.prismaService.order.findMany({
+      select: this.orderInfo,
+      where: {
+        status: OrderStatus.APPROVED,
+      },
+    });
+  }
+
   async getUserOrders(ownerId: number) {
     return this.prismaService.order.findMany({
       select: this.orderInfo,
       where: { ownerId },
+    });
+  }
+
+  async getDriverOrders(driverId: number) {
+    return this.prismaService.order.findMany({
+      select: this.orderInfo,
+      where: { driverId },
     });
   }
 
