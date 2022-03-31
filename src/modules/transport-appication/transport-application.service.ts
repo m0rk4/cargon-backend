@@ -36,10 +36,10 @@ export class TransportApplicationService {
     );
   }
 
-  rejectTransportApplication(id: number) {
+  declineTransportApplication(id: number) {
     return this.changeTransportApplicationStatus(
       id,
-      TransportApplicationStatus.CANCELLED,
+      TransportApplicationStatus.DECLINED,
     );
   }
 

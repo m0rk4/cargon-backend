@@ -59,10 +59,12 @@ model Order {
   createdAt        DateTime         @db.Timestamp(6) @default(now())
   updatedAt        DateTime         @db.Timestamp(6) @default(now()) @updatedAt
   ownerId          Int
+  driverId         Int?
   fromLocationId   Int
   toLocationId     Int
   fromLocation     Location          @relation("locationsToorders_fromLocation", fields: [fromLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_from")
-  user             User              @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_User")
+  user             User              @relation("order_owner", fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_User")
+  driver           User?             @relation("order_driver", fields: [driverId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   status           OrderStatus       @default(PENDING)
   toLocation       Location          @relation("locationsToorders_toLocation", fields: [toLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_to")
   cargos           Cargo[]
@@ -73,6 +75,8 @@ enum OrderStatus {
     PENDING
     APPROVED
     DECLINED
+    BOOKED
+    COMPLETED
 }
 
 model OrderTransport {
@@ -144,7 +148,8 @@ model User {
   userRating           Decimal                 @db.Decimal(3, 2)   @default(5.00)
   isActive             Boolean                 @default(true)
   role                 Role                    @default(USER)
-  orders               Order[]
+  userOrders           Order[]                 @relation("order_owner")
+  driverOrders         Order[]                 @relation("order_driver")
   transportApplication TransportApplication[]
   transports           Vehicle[]
 }

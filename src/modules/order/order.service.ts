@@ -124,6 +124,21 @@ export class OrderService {
     });
   }
 
+  async bookOrder(id: number, bookerId: number) {
+    return this.prismaService.order.update({
+      select: { id: true },
+      where: { id },
+      data: { status: OrderStatus.BOOKED },
+    });
+  }
+
+  async unBookOrder(id: number) {
+    return this.prismaService.order.update({
+      select: { id: true },
+      where: { id },
+      data: { status: OrderStatus.APPROVED },
+    });
+  }
   private async getLocationsIds(
     fromLocation: CreateLocationDto,
     toLocation: CreateLocationDto,
