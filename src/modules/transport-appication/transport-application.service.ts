@@ -43,12 +43,12 @@ export class TransportApplicationService {
     );
   }
 
-  createTransportApplication(documentPublicId: string) {
+  createTransportApplication(driverId: number, documentPublicId: string) {
     return this.prismaService.transportApplication.create({
       select: { id: true },
       data: {
+        driverId,
         documentPublicId,
-        driverId: 1,
       },
     });
   }

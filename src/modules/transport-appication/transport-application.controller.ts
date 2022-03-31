@@ -23,8 +23,11 @@ export class TransportApplicationController {
   }
 
   @Post()
-  async createTransportApplication(@Body() { publicId }: { publicId: string }) {
+  async createTransportApplication(
+    @Body() { driverId, publicId }: { driverId: string; publicId: string },
+  ) {
     return this.transportApplicationService.createTransportApplication(
+      +driverId,
       publicId,
     );
   }
