@@ -25,14 +25,20 @@ model City {
 }
 
 model DriverApplication {
-  id                    Int       @id(map: "PK_driver_application") @default(autoincrement())
-  firstName             String    @db.VarChar(50)
-  lastName              String    @db.VarChar(50)
-  phoneNumber           String    @db.VarChar(15)
-  email                 String    @db.VarChar(255)
-  isApplicationApproved Boolean   @default(false)
-  createdAt             DateTime  @db.Timestamp(6) @default(now())
-  updatedAt             DateTime  @db.Timestamp(6) @default(now()) @updatedAt
+  id                    Int                       @id(map: "PK_driver_application") @default(autoincrement())
+  firstName             String                    @db.VarChar(50)
+  lastName              String                    @db.VarChar(50)
+  phoneNumber           String                    @db.VarChar(15)
+  email                 String                    @db.VarChar(255)
+  status                DriverApplicationStatus   @default(PENDING)
+  createdAt             DateTime                  @db.Timestamp(6) @default(now())
+  updatedAt             DateTime                  @db.Timestamp(6) @default(now()) @updatedAt
+}
+
+enum DriverApplicationStatus {
+  PENDING
+  CANCELLED
+  APPROVED
 }
 
 model Location {
