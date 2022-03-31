@@ -124,21 +124,30 @@ export class OrderService {
     });
   }
 
-  async bookOrder(id: number, bookerId: number) {
+  async bookOrder(id: number, driverId: number) {
     return this.prismaService.order.update({
       select: { id: true },
       where: { id },
-      data: { status: OrderStatus.BOOKED },
+      data: { status: OrderStatus.BOOKED, driverId  },
     });
   }
 
-  async unBookOrder(id: number) {
+  async releaseOrder(id: number) {
     return this.prismaService.order.update({
       select: { id: true },
       where: { id },
-      data: { status: OrderStatus.APPROVED },
+      data: { status: OrderStatus.APPROVED, driverId: null },
     });
   }
+
+  async completeOrder(id: number) {
+    return this.prismaService.order.update({
+      select: { id: true },
+      where: { id },
+      data: { status: OrderStatus.COMPLETED },
+    });
+  }
+
   private async getLocationsIds(
     fromLocation: CreateLocationDto,
     toLocation: CreateLocationDto,

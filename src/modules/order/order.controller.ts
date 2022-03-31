@@ -32,6 +32,21 @@ export class OrderController {
     return this.orderService.declineOrder(+id);
   }
 
+  @Put(':id/book/:driverId')
+  async bookOrder(@Param('id') id: string, @Param('driverId') driverId: string) {
+    return this.orderService.bookOrder(+id, +driverId);
+  }
+
+  @Put(':id/release')
+  async releaseOrder(@Param('id') id: string) {
+    return this.orderService.releaseOrder(+id);
+  }
+
+  @Put(':id/complete')
+  async completeOrder(@Param('id') id: string) {
+    return this.orderService.completeOrder(+id);
+  }
+
   @Put(':id')
   async updateOrder(
     @Param('id') id: string,
