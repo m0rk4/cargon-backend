@@ -33,7 +33,10 @@ export class OrderController {
   }
 
   @Put(':id/book/:driverId')
-  async bookOrder(@Param('id') id: string, @Param('driverId') driverId: string) {
+  async bookOrder(
+    @Param('id') id: string,
+    @Param('driverId') driverId: string,
+  ) {
     return this.orderService.bookOrder(+id, +driverId);
   }
 

@@ -109,43 +109,27 @@ export class OrderService {
   }
 
   async approveOrder(id: number) {
-    return this.prismaService.order.update({
-      select: { id: true },
-      where: { id },
-      data: { status: OrderStatus.APPROVED },
-    });
+    return this.changeOrderStatus(id, OrderStatus.APPROVED);
   }
 
   async declineOrder(id: number) {
-    return this.prismaService.order.update({
-      select: { id: true },
-      where: { id },
-      data: { status: OrderStatus.DECLINED },
-    });
+    return this.changeOrderStatus(id, OrderStatus.DECLINED);
   }
 
   async bookOrder(id: number, driverId: number) {
     return this.prismaService.order.update({
       select: { id: true },
       where: { id },
-      data: { status: OrderStatus.BOOKED, driverId  },
+      data: { status: OrderStatus.BOOKED, driverId },
     });
   }
 
   async releaseOrder(id: number) {
-    return this.prismaService.order.update({
-      select: { id: true },
-      where: { id },
-      data: { status: OrderStatus.APPROVED, driverId: null },
-    });
+    return this.changeOrderStatus(id, OrderStatus.APPROVED);
   }
 
   async completeOrder(id: number) {
-    return this.prismaService.order.update({
-      select: { id: true },
-      where: { id },
-      data: { status: OrderStatus.COMPLETED },
-    });
+    return this.changeOrderStatus(id, OrderStatus.COMPLETED);
   }
 
   private async getLocationsIds(
@@ -166,5 +150,13 @@ export class OrderService {
     for (const cargo of cargos) {
       await this.cargoService.createCargo(orderId, cargo);
     }
+  }
+
+  private async changeOrderStatus(id: number, status: OrderStatus) {
+    return this.prismaService.order.update({
+      select: { id: true },
+      where: { id },
+      data: { status },
+    });
   }
 }
