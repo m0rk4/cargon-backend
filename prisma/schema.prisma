@@ -37,8 +37,8 @@ model DriverApplication {
 
 enum DriverApplicationStatus {
   PENDING
-  CANCELLED
   APPROVED
+  DECLINED
 }
 
 model Location {
@@ -107,8 +107,8 @@ model TransportApplication {
 
 enum TransportApplicationStatus {
   PENDING
-  CANCELLED
   APPROVED
+  DECLINED
 }
 
 model TransportType {
