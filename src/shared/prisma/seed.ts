@@ -44,25 +44,25 @@ async function main() {
   prismaService.driverApplication.createMany({
     data: [
       {
-        firstName: "Tolya",
-        lastName: "Vodila",
-        phoneNumber: "Chetkiy",
-        email: "krivoy.pacan@russia.com"
+        firstName: 'Tolya',
+        lastName: 'Vodila',
+        phoneNumber: 'Chetkiy',
+        email: 'krivoy.pacan@russia.com',
       },
       {
-        firstName: "Vodila",
-        lastName: "IzTagila",
-        phoneNumber: "Chetkiy",
-        email: "rovnyi.pacan@dvor.com"
+        firstName: 'Vodila',
+        lastName: 'IzTagila',
+        phoneNumber: 'Chetkiy',
+        email: 'rovnyi.pacan@dvor.com',
       },
       {
-        firstName: "Nikita",
-        lastName: "Mashyna",
-        phoneNumber: "Krutoi",
-        email: "kok.boxer@slonym.com"
-      }
-    ]
-  })
+        firstName: 'Nikita',
+        lastName: 'Mashyna',
+        phoneNumber: 'Krutoi',
+        email: 'kok.boxer@slonym.com',
+      },
+    ],
+  });
 
   const orders = [
     {
