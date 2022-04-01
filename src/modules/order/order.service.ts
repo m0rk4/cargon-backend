@@ -120,6 +120,7 @@ export class OrderService {
       data: {
         toLocationId,
         fromLocationId,
+        status: OrderStatus.PENDING,
       },
     });
   }
