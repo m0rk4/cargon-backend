@@ -42,10 +42,10 @@ export class OrderController {
     return this.orderService.declineOrder(+id);
   }
 
-  @Put(':id/book/:driverId')
+  @Put(':id/book')
   async bookOrder(
     @Param('id') id: string,
-    @Param('driverId') driverId: string,
+    @Body() { driverId }: { driverId: string },
   ) {
     return this.orderService.bookOrder(+id, +driverId);
   }
