@@ -6,4 +6,5 @@ export interface CreateOrderDto {
   fromLocation: CreateLocationDto;
   toLocation: CreateLocationDto;
   cargos: CreateCargoDto[];
+  transportIds: number[];
 }

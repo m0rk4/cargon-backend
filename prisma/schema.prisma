@@ -115,12 +115,6 @@ enum TransportApplicationStatus {
   DECLINED
 }
 
-model TransportType {
-  id         Int          @id(map: "PK_TransportType") @default(autoincrement()) @db.SmallInt
-  typeName   String       @db.VarChar(50)
-  transports Vehicle[]
-}
-
 model Vehicle {
   id                  Int                 @id(map: "PK_Vehicles") @default(autoincrement())
   yearOfProduction    DateTime            @db.Date
@@ -128,13 +122,19 @@ model Vehicle {
   model               String              @db.VarChar(50)
   registrationNumber  String              @db.VarChar(7)
   driverId            Int
-  typeId              Int                 @db.SmallInt
   vin                 String              @db.VarChar(17)
   insuranceExpiryTs   DateTime            @db.Timestamp(6)
+  vehicleType         VehicleType
   user                User                @relation(fields: [driverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Vehicle_User")
-  transportType       TransportType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Transport_TransportType")
   orderTransports     OrderTransport[]
   VehicleParameters   VehicleParameters?
+}
+
+enum VehicleType {
+  TRUCK
+  BUS
+  MINIBUS
+  CAR
 }
 
 model User {

@@ -59,6 +59,7 @@ export class OrderService {
       },
     });
     await this.createCargos(order.id, data.cargos);
+    await this.setOrderTransports(order.id, data.transportIds);
     return order;
   }
 
@@ -169,11 +170,28 @@ export class OrderService {
     }
   }
 
+  private async setOrderTransports(orderId: number, transportIds: number[]) {
+    for (const transportId of transportIds) {
+      await this.prismaService.orderTransport.create({
+        data: {
+          orderId,
+          transportId,
+          actualDistance: await this.calcDistance(),
+        },
+      });
+    }
+  }
+
   private async changeOrderStatus(id: number, status: OrderStatus) {
     return this.prismaService.order.update({
       select: { id: true },
       where: { id },
       data: { status },
     });
+  }
+
+  // TODO: implement some logic to calc distances
+  private async calcDistance() {
+    return 100;
   }
 }

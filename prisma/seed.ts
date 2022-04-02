@@ -1,9 +1,12 @@
-import { OrderService } from '../../modules/order/order.service';
-import { PrismaService } from './prisma.service';
-import { LocationService } from '../../modules/location/location.service';
-import { CargoService } from '../../modules/cargo/cargo.service';
+import { OrderService } from '../src/modules/order/order.service';
+import { PrismaService } from '../src/shared/prisma/prisma.service';
+import { LocationService } from '../src/modules/location/location.service';
+import { CargoService } from '../src/modules/cargo/cargo.service';
+import {VehicleService} from "../dist/modules/vehicle/vehicle.service";
+import { VehicleType } from "@prisma/client"
 
 const prismaService = new PrismaService();
+const vehicleService = new VehicleService(prismaService);
 const orderService = new OrderService(
   prismaService,
   new LocationService(prismaService),
@@ -63,10 +66,69 @@ async function main() {
       },
     ],
   });
+  const vehicles = [
+
+    {
+      driverId: 2,
+      yearOfProductionUNIX: 1646210798,
+      brand: "VW",
+      model: "Crafter",
+      registrationNumber: "AB12346",
+      vin: "12345NMJ23412",
+      insuranceExpiryTsUNIX: 1648900065,
+      vehicleType: VehicleType.TRUCK,
+      parameters: {
+        width: 123,
+        height: 233,
+        length: 600,
+        capacity: 1000,
+        mileage: 1654
+      }
+    },
+    {
+      driverId: 3,
+      yearOfProductionUNIX: 1646210798,
+      brand: "Mercedes",
+      model: "M",
+      registrationNumber: "AB16746",
+      vin: "12345NMJ23412",
+      insuranceExpiryTsUNIX: 1648900065,
+      vehicleType: VehicleType.MINIBUS,
+      parameters: {
+        width: 13,
+        height: 273,
+        length: 340,
+        capacity: 6000,
+        mileage: 154
+      }
+    },
+    {
+      driverId: 1,
+      yearOfProductionUNIX: 1646210698,
+      brand: "Ford",
+      model: "Transit",
+      registrationNumber: "AB62346",
+      vin: "12345NMJ23412",
+      insuranceExpiryTsUNIX: 1648908065,
+      vehicleType: VehicleType.CAR,
+      parameters: {
+        width: 130,
+        height: 203,
+        length: 300,
+        capacity: 700,
+        mileage: 15334
+      }
+    }
+  ]
+  for (const vehicle of vehicles ) {
+    await vehicleService.createVehicle(vehicle);
+  }
+
 
   const orders = [
     {
       userId: 1,
+      transportIds: [1],
       fromLocation: {
         city: {
           name: 'Minsk',
@@ -104,6 +166,7 @@ async function main() {
     },
     {
       userId: 2,
+      transportIds: [1, 2],
       fromLocation: {
         city: {
           name: 'Mogilev',
@@ -141,6 +204,7 @@ async function main() {
     },
     {
       userId: 1,
+      transportIds: [3],
       fromLocation: {
         city: {
           name: 'Brest',
