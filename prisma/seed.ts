@@ -2,7 +2,7 @@ import { OrderService } from '../src/modules/order/order.service';
 import { PrismaService } from '../src/shared/prisma/prisma.service';
 import { LocationService } from '../src/modules/location/location.service';
 import { CargoService } from '../src/modules/cargo/cargo.service';
-import {VehicleService} from "../dist/modules/vehicle/vehicle.service";
+import {VehicleService} from "../src/modules/vehicle/vehicle.service";
 import { VehicleType } from "@prisma/client"
 
 const prismaService = new PrismaService();
