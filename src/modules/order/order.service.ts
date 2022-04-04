@@ -25,16 +25,21 @@ export class OrderService {
       },
     },
   };
+  private userInfo = {
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      userRating: true,
+    },
+  };
   private orderInfo = {
     id: true,
     createdAt: true,
     updatedAt: true,
-    user: {
-      select: {
-        firstName: true,
-        lastName: true,
-      },
-    },
+    user: this.userInfo,
+    cargos: {},
+    driver: this.userInfo,
     fromLocation: this.locationWhere,
     toLocation: this.locationWhere,
     status: true,

@@ -18,6 +18,7 @@ export class TransportApplicationService {
         documentPublicId: true,
         driver: {
           select: {
+            id: true,
             firstName: true,
             lastName: true,
           },
