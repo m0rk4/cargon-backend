@@ -2,7 +2,7 @@ import { CreateLocationDto } from '../../location/model/create-location-dto.inte
 import { CreateCargoDto } from '../../cargo/model/create-cargo-dto.interface';
 import {
   ArrayNotEmpty,
-  IsInt,
+  IsInt, IsOptional,
   IsPositive,
   ValidateNested,
 } from 'class-validator';
@@ -22,8 +22,8 @@ export class CreateOrderDto {
   @ValidateNested()
   cargos: CreateCargoDto[];
 
-  @ArrayNotEmpty()
+  @IsOptional()
   @IsInt({ each: true })
   @IsPositive({ each: true })
-  transportIds: number[];
+  transportIds?: number[];
 }

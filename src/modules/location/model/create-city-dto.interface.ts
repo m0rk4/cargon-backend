@@ -1,6 +1,7 @@
-import { IsInt, IsPositive, IsString, Length } from 'class-validator';
+import {IsInt, IsOptional, IsPositive, IsString, Length} from 'class-validator';
 
 export class CreateCityDto {
+  @IsOptional()
   @IsInt()
   @IsPositive()
   id?: number;
