@@ -1,5 +1,3 @@
-## Description
-
 # Cargon backend repository
 
 ## Installation
