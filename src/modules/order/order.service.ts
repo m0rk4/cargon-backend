@@ -64,7 +64,7 @@ export class OrderService {
       },
     });
     await this.createCargos(order.id, data.cargos);
-    await this.setOrderTransports(order.id, data.transportIds);
+    await this.setOrderTransports(order.id, data?.transportIds ?? []);
     return order;
   }
 
