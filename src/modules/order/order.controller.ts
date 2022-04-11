@@ -27,11 +27,6 @@ export class OrderController {
     return this.orderService.getDriverOrders(+driverId);
   }
 
-  @Get('driver-orders/:driver_id')
-  async getDriverOrders(@Param('driver_id') driver_id: string) {
-    return this.orderService.getDriverOrders(+driver_id);
-  }
-
   @Get(':id')
   async getOrder(@Param('id') id: string) {
     return this.orderService.getOrder(+id);
