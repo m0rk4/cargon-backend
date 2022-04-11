@@ -17,14 +17,17 @@ export class TransportApplicationController {
     return this.transportApplicationService.approveTransportApplication(+id);
   }
 
-  @Put(':id/reject')
-  async rejectTransportApplication(@Param('id') id: string) {
-    return this.transportApplicationService.rejectTransportApplication(+id);
+  @Put(':id/decline')
+  async declineTransportApplication(@Param('id') id: string) {
+    return this.transportApplicationService.declineTransportApplication(+id);
   }
 
   @Post()
-  async createTransportApplication(@Body() { publicId }: { publicId: string }) {
+  async createTransportApplication(
+    @Body() { driverId, publicId }: { driverId: string; publicId: string },
+  ) {
     return this.transportApplicationService.createTransportApplication(
+      +driverId,
       publicId,
     );
   }

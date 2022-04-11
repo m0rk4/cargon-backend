@@ -1,5 +1,4 @@
-export interface UpdateUserDto {
-  firstName: string;
-  lastName: string;
-  email: string;
-}
+import { CreateUserDto } from './create-user-dto.interface';
+import { PartialType } from '@nestjs/mapped-types';
+
+export class UpdateUserDto extends PartialType(CreateUserDto) {}

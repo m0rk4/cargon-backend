@@ -6,6 +6,7 @@ import { OrderModule } from './modules/order/order.module';
 import { LocationModule } from './modules/location/location.module';
 import { ConfigModule } from '@nestjs/config';
 import { CargoModule } from './modules/cargo/cargo.module';
+import { VehicleModule } from './modules/vehicle/vehicle.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CargoModule } from './modules/cargo/cargo.module';
     OrderModule,
     LocationModule,
     CargoModule,
+    VehicleModule,
   ],
   controllers: [],
   providers: [],

@@ -1,6 +1,4 @@
-import { CreateLocationDto } from '../../location/model/create-location-dto.interface';
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateOrderDto } from './create-order-dto.interface';
 
-export interface UpdateOrderDto {
-  fromLocation: CreateLocationDto;
-  toLocation: CreateLocationDto;
-}
+export class UpdateOrderDto extends PartialType(CreateOrderDto) {}

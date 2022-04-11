@@ -7,6 +7,17 @@ import { UpdateUserDto } from './model/update-user-dto.interface';
 export class UserService {
   constructor(private prismaService: PrismaService) {}
 
+  private userInfo = {
+    id: true,
+    firstName: true,
+    lastName: true,
+    email: true,
+    createdAt: true,
+    updatedAt: true,
+    isActive: true,
+    userRating: true,
+  };
+
   async createUser(data: CreateUserDto) {
     // TODO: implement user registration logic
     const hash = data.password;
@@ -19,29 +30,21 @@ export class UserService {
 
   async getUsers() {
     return this.prismaService.user.findMany({
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        createdAt: true,
-        updatedAt: true,
-        isActive: true,
-      },
+      select: this.userInfo,
     });
   }
 
   async getUser(id: number) {
     return this.prismaService.user.findUnique({
+      select: this.userInfo,
       where: { id },
     });
   }
 
   async getUserByEmail(email: string) {
     return this.prismaService.user.findUnique({
-      where: {
-        email: email,
-      },
+      select: this.userInfo,
+      where: { email },
     });
   }
 

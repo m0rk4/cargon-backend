@@ -16,8 +16,10 @@ export class TransportApplicationService {
       select: {
         id: true,
         documentPublicId: true,
+        createdAt: true,
         driver: {
           select: {
+            id: true,
             firstName: true,
             lastName: true,
           },
@@ -36,19 +38,19 @@ export class TransportApplicationService {
     );
   }
 
-  rejectTransportApplication(id: number) {
+  declineTransportApplication(id: number) {
     return this.changeTransportApplicationStatus(
       id,
-      TransportApplicationStatus.CANCELLED,
+      TransportApplicationStatus.DECLINED,
     );
   }
 
-  createTransportApplication(documentPublicId: string) {
+  createTransportApplication(driverId: number, documentPublicId: string) {
     return this.prismaService.transportApplication.create({
       select: { id: true },
       data: {
+        driverId,
         documentPublicId,
-        driverId: 1,
       },
     });
   }

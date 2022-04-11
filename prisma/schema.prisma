@@ -25,14 +25,20 @@ model City {
 }
 
 model DriverApplication {
-  id                    Int       @id(map: "PK_driver_application") @default(autoincrement())
-  firstName             String    @db.VarChar(50)
-  lastName              String    @db.VarChar(50)
-  phoneNumber           String    @db.VarChar(15)
-  email                 String    @db.VarChar(255)
-  isApplicationApproved Boolean   @default(false)
-  createdAt             DateTime  @db.Timestamp(6) @default(now())
-  updatedAt             DateTime  @db.Timestamp(6) @default(now()) @updatedAt
+  id                    Int                       @id(map: "PK_driver_application") @default(autoincrement())
+  firstName             String                    @db.VarChar(50)
+  lastName              String                    @db.VarChar(50)
+  phoneNumber           String                    @db.VarChar(15)
+  email                 String                    @db.VarChar(255)
+  status                DriverApplicationStatus   @default(PENDING)
+  createdAt             DateTime                  @db.Timestamp(6) @default(now())
+  updatedAt             DateTime                  @db.Timestamp(6) @default(now()) @updatedAt
+}
+
+enum DriverApplicationStatus {
+  PENDING
+  APPROVED
+  DECLINED
 }
 
 model Location {
@@ -53,10 +59,12 @@ model Order {
   createdAt        DateTime         @db.Timestamp(6) @default(now())
   updatedAt        DateTime         @db.Timestamp(6) @default(now()) @updatedAt
   ownerId          Int
+  driverId         Int?
   fromLocationId   Int
   toLocationId     Int
   fromLocation     Location          @relation("locationsToorders_fromLocation", fields: [fromLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_from")
-  user             User              @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_User")
+  user             User              @relation("order_owner", fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_User")
+  driver           User?             @relation("order_driver", fields: [driverId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   status           OrderStatus       @default(PENDING)
   toLocation       Location          @relation("locationsToorders_toLocation", fields: [toLocationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_locations_to")
   cargos           Cargo[]
@@ -67,6 +75,8 @@ enum OrderStatus {
     PENDING
     APPROVED
     DECLINED
+    BOOKED
+    COMPLETED
 }
 
 model OrderTransport {
@@ -101,14 +111,8 @@ model TransportApplication {
 
 enum TransportApplicationStatus {
   PENDING
-  CANCELLED
   APPROVED
-}
-
-model TransportType {
-  id         Int          @id(map: "PK_TransportType") @default(autoincrement()) @db.SmallInt
-  typeName   String       @db.VarChar(50)
-  transports Vehicle[]
+  DECLINED
 }
 
 model Vehicle {
@@ -118,13 +122,19 @@ model Vehicle {
   model               String              @db.VarChar(50)
   registrationNumber  String              @db.VarChar(7)
   driverId            Int
-  typeId              Int                 @db.SmallInt
   vin                 String              @db.VarChar(17)
   insuranceExpiryTs   DateTime            @db.Timestamp(6)
+  vehicleType         VehicleType
   user                User                @relation(fields: [driverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Vehicle_User")
-  transportType       TransportType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Transport_TransportType")
   orderTransports     OrderTransport[]
   VehicleParameters   VehicleParameters?
+}
+
+enum VehicleType {
+  TRUCK
+  BUS
+  MINIBUS
+  CAR
 }
 
 model User {
@@ -138,7 +148,8 @@ model User {
   userRating           Decimal                 @db.Decimal(3, 2)   @default(5.00)
   isActive             Boolean                 @default(true)
   role                 Role                    @default(USER)
-  orders               Order[]
+  userOrders           Order[]                 @relation("order_owner")
+  driverOrders         Order[]                 @relation("order_driver")
   transportApplication TransportApplication[]
   transports           Vehicle[]
 }
