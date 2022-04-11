@@ -10,6 +10,7 @@ import { CreateCargoDto } from '../cargo/model/create-cargo-dto.interface';
 
 @Injectable()
 export class OrderService {
+
   private locationWhere = {
     select: {
       home: true,
@@ -25,6 +26,7 @@ export class OrderService {
       },
     },
   };
+
   private userInfo = {
     select: {
       id: true,
@@ -33,6 +35,7 @@ export class OrderService {
       userRating: true,
     },
   };
+
   private orderInfo = {
     id: true,
     createdAt: true,
@@ -148,7 +151,11 @@ export class OrderService {
   }
 
   async releaseOrder(id: number) {
-    return this.changeOrderStatus(id, OrderStatus.APPROVED);
+    return this.prismaService.order.update({
+      select: { id: true },
+      where: { id },
+      data: { status: OrderStatus.APPROVED, driverId: null },
+    });
   }
 
   async completeOrder(id: number) {
