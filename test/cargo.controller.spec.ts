@@ -1,4 +1,4 @@
-import { Test} from "@nestjs/testing";
+import { Test } from "@nestjs/testing";
 import { CargoController } from '../src/modules/cargo/cargo.controller';
 import { CargoService } from '../src/modules/cargo/cargo.service';
 import { PrismaService } from '../src/shared/prisma/prisma.service';
