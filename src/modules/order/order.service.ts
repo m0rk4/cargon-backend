@@ -26,7 +26,7 @@ export class OrderService {
       },
     },
   };
-
+  
   private userInfo = {
     select: {
       id: true,
@@ -67,7 +67,8 @@ export class OrderService {
       },
     });
     await this.createCargos(order.id, data.cargos);
-    await this.setOrderTransports(order.id, data.transportIds);
+    await this.setOrderTransports(order.id, data?.transportIds ?? []);
+
     return order;
   }
 
@@ -157,7 +158,6 @@ export class OrderService {
       data: { status: OrderStatus.APPROVED, driverId: null },
     });
   }
-
   async completeOrder(id: number) {
     return this.changeOrderStatus(id, OrderStatus.COMPLETED);
   }

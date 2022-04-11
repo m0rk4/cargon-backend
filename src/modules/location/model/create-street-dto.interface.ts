@@ -1,4 +1,10 @@
-import {IsInt, IsOptional, IsPositive, IsString, Length} from 'class-validator';
+import {
+  IsInt,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class CreateStreetDto {
   @IsOptional()

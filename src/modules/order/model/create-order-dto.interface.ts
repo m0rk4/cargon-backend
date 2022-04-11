@@ -2,7 +2,8 @@ import { CreateLocationDto } from '../../location/model/create-location-dto.inte
 import { CreateCargoDto } from '../../cargo/model/create-cargo-dto.interface';
 import {
   ArrayNotEmpty,
-  IsInt, IsOptional,
+  IsInt,
+  IsOptional,
   IsPositive,
   ValidateNested,
 } from 'class-validator';
