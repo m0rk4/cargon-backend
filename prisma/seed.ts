@@ -128,7 +128,6 @@ async function main() {
   const orders = [
     {
       userId: 1,
-      transportIds: [1],
       fromLocation: {
         city: {
           name: 'Minsk',
@@ -166,7 +165,6 @@ async function main() {
     },
     {
       userId: 2,
-      transportIds: [1, 2],
       fromLocation: {
         city: {
           name: 'Mogilev',
@@ -204,7 +202,6 @@ async function main() {
     },
     {
       userId: 1,
-      transportIds: [3],
       fromLocation: {
         city: {
           name: 'Brest',
