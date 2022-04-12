@@ -36,26 +36,29 @@ export class VehicleService {
   }
 
   async createVehicle(data: CreateVehicleDto) {
-    const vehicleParameters = data.parameters;
-    delete data.parameters;
-
     const yearOfProduction = new Date(
       data.yearOfProductionUNIX * this.tsMultiplier,
     );
-    delete data.yearOfProductionUNIX;
-
     const insuranceExpiryTs = new Date(
       data.insuranceExpiryTsUNIX * this.tsMultiplier,
     );
-    delete data.insuranceExpiryTsUNIX;
 
-    const vehicle = await this.prismaService.vehicle.create({
-      data: { yearOfProduction, insuranceExpiryTs, ...data },
+    return this.prismaService.$transaction(async (prisma) => {
+      const vehicle = await prisma.vehicle.create({
+        data: {
+          yearOfProduction,
+          insuranceExpiryTs,
+          driverId: data.driverId,
+          brand: data.brand,
+          model: data.model,
+          vin: data.vin,
+          vehicleType: data.vehicleType,
+          registrationNumber: data.registrationNumber,
+        },
+      });
+      return prisma.vehicleParameters.create({
+        data: { vehicleId: vehicle.id, ...data.parameters },
+      });
     });
-    await this.prismaService.vehicleParameters.create({
-      data: { vehicleId: vehicle.id, ...vehicleParameters },
-    });
-
-    return vehicle;
   }
 }
