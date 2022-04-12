@@ -7,11 +7,9 @@ import { LocationService } from '../location/location.service';
 import { CargoService } from '../cargo/cargo.service';
 import { CreateLocationDto } from '../location/model/create-location-dto.interface';
 import { CreateCargoDto } from '../cargo/model/create-cargo-dto.interface';
-import {CreateVehicleDto} from "../vehicle/model/create-vehicle-dto.interface";
 
 @Injectable()
 export class OrderService {
-
   private locationWhere = {
     select: {
       home: true,
@@ -27,7 +25,7 @@ export class OrderService {
       },
     },
   };
-  
+
   private userInfo = {
     select: {
       id: true,
@@ -153,12 +151,18 @@ export class OrderService {
   }
 
   async releaseOrder(id: number) {
-    return this.prismaService.order.update({
-      select: { id: true },
-      where: { id },
-      data: { status: OrderStatus.APPROVED, driverId: null },
-    });
+    return this.prismaService.$transaction([
+      this.prismaService.order.update({
+        select: { id: true },
+        where: { id },
+        data: { status: OrderStatus.APPROVED, driverId: null },
+      }),
+      this.prismaService.orderTransport.deleteMany({
+        where: { orderId: id },
+      }),
+    ]);
   }
+
   async completeOrder(id: number) {
     return this.changeOrderStatus(id, OrderStatus.COMPLETED);
   }
@@ -184,15 +188,17 @@ export class OrderService {
   }
 
   private async setOrderTransports(orderId: number, transportIds: number[]) {
+    const transports = [];
     for (const transportId of transportIds) {
-      await this.prismaService.orderTransport.create({
-        data: {
-          orderId,
-          transportId,
-          actualDistance: await this.calcDistance(),
-        },
+      transports.push({
+        orderId,
+        transportId,
+        actualDistance: await this.calcDistance(),
       });
     }
+    return this.prismaService.orderTransport.createMany({
+      data: transports,
+    });
   }
 
   private async changeOrderStatus(id: number, status: OrderStatus) {
