@@ -3,7 +3,6 @@ import { CreateCargoDto } from '../../cargo/model/create-cargo-dto.interface';
 import {
   ArrayNotEmpty,
   IsInt,
-  IsOptional,
   IsPositive,
   ValidateNested,
 } from 'class-validator';
@@ -22,9 +21,4 @@ export class CreateOrderDto {
   @ArrayNotEmpty()
   @ValidateNested()
   cargos: CreateCargoDto[];
-
-  @IsOptional()
-  @IsInt({ each: true })
-  @IsPositive({ each: true })
-  transportIds?: number[];
 }

@@ -7,11 +7,10 @@ import { LocationService } from '../location/location.service';
 import { CargoService } from '../cargo/cargo.service';
 import { CreateLocationDto } from '../location/model/create-location-dto.interface';
 import { CreateCargoDto } from '../cargo/model/create-cargo-dto.interface';
-import {CreateVehicleDto} from "../vehicle/model/create-vehicle-dto.interface";
+import { BookOrderDto } from './model/book-order-dto.interface';
 
 @Injectable()
 export class OrderService {
-
   private locationWhere = {
     select: {
       home: true,
@@ -27,7 +26,7 @@ export class OrderService {
       },
     },
   };
-  
+
   private userInfo = {
     select: {
       id: true,
@@ -143,22 +142,30 @@ export class OrderService {
     return this.changeOrderStatus(id, OrderStatus.DECLINED);
   }
 
-  async bookOrder(id: number, driverId: number, transportIds: number[] = []) {
-    await this.setOrderTransports(id, transportIds ?? []);
-    return this.prismaService.order.update({
-      select: { id: true },
-      where: { id },
-      data: { status: OrderStatus.BOOKED, driverId },
+  async bookOrder(id: number, data: BookOrderDto) {
+    return this.prismaService.$transaction(async (prisma) => {
+      await this.setOrderTransports(id, data.transportIds);
+      return prisma.order.update({
+        select: { id: true },
+        where: { id },
+        data: { status: OrderStatus.BOOKED, driverId: data.driverId },
+      });
     });
   }
 
   async releaseOrder(id: number) {
-    return this.prismaService.order.update({
-      select: { id: true },
-      where: { id },
-      data: { status: OrderStatus.APPROVED, driverId: null },
-    });
+    return this.prismaService.$transaction([
+      this.prismaService.order.update({
+        select: { id: true },
+        where: { id },
+        data: { status: OrderStatus.APPROVED, driverId: null },
+      }),
+      this.prismaService.orderTransport.deleteMany({
+        where: { orderId: id },
+      }),
+    ]);
   }
+
   async completeOrder(id: number) {
     return this.changeOrderStatus(id, OrderStatus.COMPLETED);
   }
@@ -184,15 +191,12 @@ export class OrderService {
   }
 
   private async setOrderTransports(orderId: number, transportIds: number[]) {
-    for (const transportId of transportIds) {
-      await this.prismaService.orderTransport.create({
-        data: {
-          orderId,
-          transportId,
-          actualDistance: await this.calcDistance(),
-        },
-      });
-    }
+    const transports = transportIds.map((transportId) => {
+      return { orderId, transportId, actualDistance: this.calcDistance() };
+    });
+    return this.prismaService.orderTransport.createMany({
+      data: transports,
+    });
   }
 
   private async changeOrderStatus(id: number, status: OrderStatus) {
@@ -204,7 +208,7 @@ export class OrderService {
   }
 
   // TODO: implement some logic to calc distances
-  private async calcDistance() {
+  private calcDistance() {
     return 100;
   }
 }
