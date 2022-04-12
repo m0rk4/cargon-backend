@@ -80,10 +80,22 @@ describe('VehicleController', () => {
     });
   });
 
-  /*describe('getOrderVehicles', () => {
+  describe('getOrderVehicles', () => {
     it('should return a vehicle by valid order id', async () => {
       const validOrderId = "1";
-      const vehicle = ();
+      const vehicle = [{
+        transport: {
+          id: 3,
+          yearOfProduction: new Date(),
+          brand: "Ford",
+          model: "Transit",
+          registrationNumber: "AB62346",
+          driverId: 1,
+          vin: "12345NMJ23412",
+          insuranceExpiryTs: new Date(),
+          vehicleType: VehicleType.CAR
+        }
+      }];
       jest.spyOn(vehicleService, 'getOrderVehicles').mockImplementation(async () => vehicle);
 
       expect(await vehicleController.getOrderVehicles(validOrderId)).toBe(vehicle);
@@ -96,7 +108,7 @@ describe('VehicleController', () => {
 
       expect(await vehicleController.getOrderVehicles(invalidOrderId)).toBe(result);
     });
-  });*/
+  });
 
   describe('createVehicle', () => {
     it('should create vehicle and return its credentials', async () => {
