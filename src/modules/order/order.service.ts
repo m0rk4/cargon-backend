@@ -7,6 +7,7 @@ import { LocationService } from '../location/location.service';
 import { CargoService } from '../cargo/cargo.service';
 import { CreateLocationDto } from '../location/model/create-location-dto.interface';
 import { CreateCargoDto } from '../cargo/model/create-cargo-dto.interface';
+import { BookOrderDto } from './model/book-order-dto.interface';
 
 @Injectable()
 export class OrderService {
@@ -141,12 +142,14 @@ export class OrderService {
     return this.changeOrderStatus(id, OrderStatus.DECLINED);
   }
 
-  async bookOrder(id: number, driverId: number, transportIds: number[] = []) {
-    await this.setOrderTransports(id, transportIds ?? []);
-    return this.prismaService.order.update({
-      select: { id: true },
-      where: { id },
-      data: { status: OrderStatus.BOOKED, driverId },
+  async bookOrder(id: number, data: BookOrderDto) {
+    return this.prismaService.$transaction(async (prisma) => {
+      await this.setOrderTransports(id, data.transportIds);
+      return prisma.order.update({
+        select: { id: true },
+        where: { id },
+        data: { status: OrderStatus.BOOKED, driverId: data.driverId },
+      });
     });
   }
 
