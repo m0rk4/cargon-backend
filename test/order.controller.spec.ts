@@ -542,24 +542,30 @@ describe('OrderController', () => {
     it('should set driver to order and change its status to "BOOKED"', async () => {
       const orderId = "1";
       const driverId = "1";
-      const body = {
-        driverId: driverId
+      const bookOrderDto = {
+        driverId: +driverId,
+        transportIds: [1, 2]
       };
       const result = {
         id: +orderId
       };
       jest.spyOn(orderService, 'bookOrder').mockImplementation(async () => result);
 
-      expect(await orderController.bookOrder(orderId, body)).toBe(result);
+      expect(await orderController.bookOrder(orderId, bookOrderDto)).toBe(result);
     });
   });
 
   describe('releaseOrder', () => {
     it('should change order status to "APPROVED" and return its id', async () => {
       const id = "1";
-      const result = {
-        id: +id
-      };
+      const result: [{ id: number }, { count: number }] = [
+        {
+          id: +id
+        },
+        {
+          count: 2
+        }
+      ];
       jest.spyOn(orderService, 'releaseOrder').mockImplementation(async () => result);
 
       expect(await orderController.releaseOrder(id)).toBe(result);
