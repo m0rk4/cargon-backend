@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../shared/prisma/prisma.service';
 import { CreateUserDto } from './model/create-user-dto.interface';
-import { UpdateUserDto } from './model/update-user-dto.interface';
 
 @Injectable()
 export class UserService {
   constructor(private prismaService: PrismaService) {}
 
-  private userInfo = {
+  private static readonly USER_INFO = {
     id: true,
     firstName: true,
     lastName: true,
@@ -19,40 +18,27 @@ export class UserService {
   };
 
   async createUser(data: CreateUserDto) {
-    // TODO: implement user registration logic
-    const hash = data.password;
-    delete data.password;
-
     return this.prismaService.user.create({
-      data: { ...data, passwordHash: hash },
+      data: { ...data },
     });
   }
 
   async getUsers() {
     return this.prismaService.user.findMany({
-      select: this.userInfo,
+      select: UserService.USER_INFO,
     });
   }
 
   async getUser(id: number) {
     return this.prismaService.user.findUnique({
-      select: this.userInfo,
+      select: UserService.USER_INFO,
       where: { id },
     });
   }
 
   async getUserByEmail(email: string) {
     return this.prismaService.user.findUnique({
-      select: this.userInfo,
       where: { email },
-    });
-  }
-
-  async updateUser(id: number, data: UpdateUserDto) {
-    return this.prismaService.user.update({
-      select: { id: true },
-      where: { id },
-      data,
     });
   }
 
@@ -66,9 +52,7 @@ export class UserService {
 
   private changeUserActivity(id: number, isActive: boolean) {
     return this.prismaService.user.update({
-      select: {
-        id: true,
-      },
+      select: { id: true },
       where: { id },
       data: { isActive },
     });

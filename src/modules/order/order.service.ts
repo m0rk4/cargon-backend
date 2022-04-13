@@ -33,6 +33,7 @@ export class OrderService {
       firstName: true,
       lastName: true,
       userRating: true,
+      email: true,
     },
   };
 
@@ -192,7 +193,11 @@ export class OrderService {
 
   private async setOrderTransports(orderId: number, transportIds: number[]) {
     const transports = transportIds.map((transportId) => {
-      return { orderId, transportId, actualDistance: this.calcDistance() };
+      return {
+        orderId,
+        transportId,
+        actualDistance: OrderService.calcDistance(),
+      };
     });
     return this.prismaService.orderTransport.createMany({
       data: transports,
@@ -208,7 +213,7 @@ export class OrderService {
   }
 
   // TODO: implement some logic to calc distances
-  private calcDistance() {
+  private static calcDistance() {
     return 100;
   }
 }

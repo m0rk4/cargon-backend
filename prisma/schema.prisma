@@ -91,7 +91,10 @@ model OrderTransport {
 }
 
 enum Role {
-    USER
+    DRIVER
+    MANAGER
+    CUSTOMER
+    ADMIN
 }
 
 model Street {
@@ -143,12 +146,12 @@ model User {
   firstName            String                  @db.VarChar(50)
   lastName             String                  @db.VarChar(50)
   email                String                  @db.VarChar(255)    @unique
-  passwordHash         String                  @db.VarChar(24)
+  passwordHash         String                  @db.VarChar(255)
   createdAt            DateTime                @db.Timestamp(6)    @default(now())
   updatedAt            DateTime                @db.Timestamp(6)    @default(now()) @updatedAt
   userRating           Decimal                 @db.Decimal(3, 2)   @default(5.00)
   isActive             Boolean                 @default(true)
-  role                 Role                    @default(USER)
+  role                 Role                    @default(CUSTOMER)
   userOrders           Order[]                 @relation("order_owner")
   driverOrders         Order[]                 @relation("order_driver")
   transportApplication TransportApplication[]
