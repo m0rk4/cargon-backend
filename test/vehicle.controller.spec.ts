@@ -130,15 +130,12 @@ describe('VehicleController', () => {
         }
       };
       const result = {
-        id: 4,
-        yearOfProduction: new Date(1649744443),
-        brand: "VW",
-        model: "Golf",
-        registrationNumber: "KB42673",
-        driverId: 1,
-        vin: "12345NMJ234124422",
-        insuranceExpiryTs: new Date(1681280443),
-        vehicleType: VehicleType.CAR
+        vehicleId: 5,
+        width: 20,
+        height: 30,
+        length: 50,
+        capacity: 200,
+        mileage: 200
       };
       jest.spyOn(vehicleService, 'createVehicle').mockImplementation(async () => result);
 
