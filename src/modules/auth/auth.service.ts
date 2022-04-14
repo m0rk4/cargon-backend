@@ -27,7 +27,7 @@ export class AuthService {
 
     if (!user?.isActive) {
       throw new UnauthorizedException(
-        "This user account doesn't exist or has been disabled",
+        "User account doesn't exist or has been disabled",
       );
     }
 
