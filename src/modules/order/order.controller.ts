@@ -3,6 +3,7 @@ import { OrderService } from './order.service';
 import { CreateOrderDto } from './model/create-order-dto.interface';
 import { UpdateOrderDto } from './model/update-order-dto.interface';
 import { BookOrderDto } from './model/book-order-dto.interface';
+import { GetCurrentUserId } from '../../shared/decorators';
 
 @Controller('order')
 export class OrderController {
@@ -18,14 +19,14 @@ export class OrderController {
     return this.orderService.getApprovedOrders();
   }
 
-  @Get('user-orders/:user_id')
-  async getUserOrders(@Param('user_id') userId: string) {
-    return this.orderService.getUserOrders(+userId);
+  @Get('user-orders')
+  async getUserOrders(@GetCurrentUserId() userId: number) {
+    return this.orderService.getUserOrders(userId);
   }
 
-  @Get('driver-orders/:driver_id')
-  async getDriverOrders(@Param('driver_id') driverId: string) {
-    return this.orderService.getDriverOrders(+driverId);
+  @Get('driver-orders')
+  async getDriverOrders(@GetCurrentUserId() driverId: number) {
+    return this.orderService.getDriverOrders(driverId);
   }
 
   @Get(':id')
@@ -44,8 +45,12 @@ export class OrderController {
   }
 
   @Put(':id/book')
-  async bookOrder(@Param('id') id: string, @Body() bookOrderDto: BookOrderDto) {
-    return this.orderService.bookOrder(+id, bookOrderDto);
+  async bookOrder(
+    @Param('id') id: string,
+    @GetCurrentUserId() driverId: number,
+    @Body() bookOrderDto: BookOrderDto,
+  ) {
+    return this.orderService.bookOrder(+id, driverId, bookOrderDto);
   }
 
   @Put(':id/release')
@@ -67,7 +72,10 @@ export class OrderController {
   }
 
   @Post()
-  async createOrder(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.createOrder(createOrderDto);
+  async createOrder(
+    @GetCurrentUserId() ownerId: number,
+    @Body() createOrderDto: CreateOrderDto,
+  ) {
+    return this.orderService.createOrder(ownerId, createOrderDto);
   }
 }

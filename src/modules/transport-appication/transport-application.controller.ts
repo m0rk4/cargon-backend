@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
@@ -20,28 +21,14 @@ export class TransportApplicationController {
 
   @Get('pending')
   @UseGuards(RoleGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
+  @Roles(Role.MANAGER)
   async getPendingTransportApplications() {
     return this.transportApplicationService.getPendingTransportApplications();
   }
 
-  @Put(':id/approve')
-  @UseGuards(RoleGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
-  async approveTransportApplication(@Param('id') id: string) {
-    return this.transportApplicationService.approveTransportApplication(+id);
-  }
-
-  @Put(':id/decline')
-  @UseGuards(RoleGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
-  async declineTransportApplication(@Param('id') id: string) {
-    return this.transportApplicationService.declineTransportApplication(+id);
-  }
-
   @Get('document')
   @UseGuards(RoleGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
+  @Roles(Role.MANAGER)
   async getTransportApplicationDocument(
     @Query('documentPublicId') documentPublicId: string,
   ) {
@@ -50,12 +37,26 @@ export class TransportApplicationController {
     );
   }
 
+  @Put(':id/approve')
+  @UseGuards(RoleGuard)
+  @Roles(Role.MANAGER)
+  async approveTransportApplication(@Param('id') id: string) {
+    return this.transportApplicationService.approveTransportApplication(+id);
+  }
+
+  @Put(':id/decline')
+  @UseGuards(RoleGuard)
+  @Roles(Role.MANAGER)
+  async declineTransportApplication(@Param('id') id: string) {
+    return this.transportApplicationService.declineTransportApplication(+id);
+  }
+
   @Post()
   @UseGuards(RoleGuard)
   @Roles(Role.DRIVER)
   async createTransportApplication(
     @GetCurrentUserId() driverId: number,
-    @Param('publicId') publicId: string,
+    @Body() { publicId }: { publicId: string },
   ) {
     return this.transportApplicationService.createTransportApplication(
       +driverId,

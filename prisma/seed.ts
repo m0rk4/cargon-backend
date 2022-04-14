@@ -240,7 +240,7 @@ async function main() {
   ];
 
   for (const order of orders) {
-    await orderService.createOrder(order);
+    await orderService.createOrder(1, order);
   }
 }
 

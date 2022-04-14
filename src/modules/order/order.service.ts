@@ -55,14 +55,14 @@ export class OrderService {
     private cargoService: CargoService,
   ) {}
 
-  async createOrder(data: CreateOrderDto) {
+  async createOrder(ownerId: number, data: CreateOrderDto) {
     const [fromLocationId, toLocationId] = await this.getLocationsIds(
       data.fromLocation,
       data.toLocation,
     );
     const order = await this.prismaService.order.create({
       data: {
-        ownerId: data.userId,
+        ownerId,
         toLocationId,
         fromLocationId,
       },
@@ -143,13 +143,13 @@ export class OrderService {
     return this.changeOrderStatus(id, OrderStatus.DECLINED);
   }
 
-  async bookOrder(id: number, data: BookOrderDto) {
+  async bookOrder(id: number, driverId: number, data: BookOrderDto) {
     return this.prismaService.$transaction(async (prisma) => {
       await this.setOrderTransports(id, data.transportIds);
       return prisma.order.update({
         select: { id: true },
         where: { id },
-        data: { status: OrderStatus.BOOKED, driverId: data.driverId },
+        data: { status: OrderStatus.BOOKED, driverId },
       });
     });
   }

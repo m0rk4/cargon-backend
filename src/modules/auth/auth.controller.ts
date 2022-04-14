@@ -9,7 +9,7 @@ import {
 
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto';
-import { Tokens } from './types';
+import { LoginResponse } from './types';
 import { SignUpDto } from './dto/sign-up.dto';
 import { Public } from '../../shared/decorators';
 import { LocalAuthGuard } from '../../shared/guards';
@@ -21,7 +21,7 @@ export class AuthController {
   @Public()
   @Post('/signup')
   @HttpCode(HttpStatus.CREATED)
-  signupLocal(@Body() dto: SignUpDto): Promise<Tokens> {
+  signupLocal(@Body() dto: SignUpDto): Promise<void> {
     return this.authService.signupLocal(dto);
   }
 
@@ -29,7 +29,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('/signin')
   @HttpCode(HttpStatus.CREATED)
-  signinLocal(@Body() dto: SignInDto): Promise<Tokens> {
+  signinLocal(@Body() dto: SignInDto): Promise<LoginResponse> {
     return this.authService.signinLocal(dto);
   }
 }

@@ -19,21 +19,21 @@ export class DriverApplicationController {
 
   @Get('pending')
   @UseGuards(RoleGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
+  @Roles(Role.MANAGER)
   async getPendingDriverApplications() {
     return this.driverApplicationService.getPendingDriverApplications();
   }
 
   @Put(':id/approve')
   @UseGuards(RoleGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
+  @Roles(Role.MANAGER)
   async approveApplication(@Param('id') id: string) {
     return this.driverApplicationService.approveApplication(+id);
   }
 
   @Put(':id/decline')
   @UseGuards(RoleGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
+  @Roles(Role.MANAGER)
   async declineApplication(@Param('id') id: string) {
     return this.driverApplicationService.declineApplication(+id);
   }

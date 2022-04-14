@@ -9,7 +9,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
 
 import { SignInDto } from './dto';
-import { JwtPayload, Tokens } from './types';
+import { JwtPayload, LoginResponse } from './types';
 import { SignUpDto } from './dto/sign-up.dto';
 import { User } from '@prisma/client';
 import { UserService } from '../user/user.service';
@@ -43,17 +43,16 @@ export class AuthService {
     };
   }
 
-  async signupLocal(dto: SignUpDto): Promise<Tokens> {
+  async signupLocal(dto: SignUpDto): Promise<void> {
     const passwordHash = await argon.hash(dto.password);
 
     try {
-      const user = await this.userService.createUser({
+      await this.userService.createUser({
         firstName: dto.firstName,
         lastName: dto.lastName,
         email: dto.email,
         passwordHash,
       });
-      return await this.getTokens(user);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -64,12 +63,12 @@ export class AuthService {
     }
   }
 
-  async signinLocal(dto: SignInDto): Promise<Tokens> {
+  async signinLocal(dto: SignInDto): Promise<LoginResponse> {
     const user = await this.userService.getUserByEmail(dto.email);
     return await this.getTokens(user);
   }
 
-  async getTokens(user: User): Promise<Tokens> {
+  async getTokens(user: User): Promise<LoginResponse> {
     const jwtPayload: JwtPayload = {
       sub: user.id,
       email: user.email,
@@ -81,6 +80,11 @@ export class AuthService {
       expiresIn: this.config.get<string>('AT_EXPIRES_IN'),
     });
 
-    return { access_token };
+    delete user.passwordHash;
+    return {
+      user,
+      accessToken: access_token,
+      expiresIn: +this.config.get<string>('AT_EXPIRES_IN_MILLISECONDS'),
+    };
   }
 }
