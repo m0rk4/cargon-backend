@@ -11,7 +11,7 @@ export class TransportApplicationService {
     private httpService: HttpService,
   ) {}
 
-  getPendingTransportApplications() {
+  async getPendingTransportApplications() {
     return this.prismaService.transportApplication.findMany({
       select: {
         id: true,
@@ -31,21 +31,21 @@ export class TransportApplicationService {
     });
   }
 
-  approveTransportApplication(id: number) {
+  async approveTransportApplication(id: number) {
     return this.changeTransportApplicationStatus(
       id,
       TransportApplicationStatus.APPROVED,
     );
   }
 
-  declineTransportApplication(id: number) {
+  async declineTransportApplication(id: number) {
     return this.changeTransportApplicationStatus(
       id,
       TransportApplicationStatus.DECLINED,
     );
   }
 
-  createTransportApplication(driverId: number, documentPublicId: string) {
+  async createTransportApplication(driverId: number, documentPublicId: string) {
     return this.prismaService.transportApplication.create({
       select: { id: true },
       data: {

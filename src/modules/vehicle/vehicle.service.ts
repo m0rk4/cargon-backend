@@ -21,7 +21,7 @@ export class VehicleService {
   }
 
   async getOrderVehicles(orderId: number) {
-    this.prismaService.orderTransport.findMany({
+    return this.prismaService.orderTransport.findMany({
       select: { transport: true },
       where: { orderId },
     });
