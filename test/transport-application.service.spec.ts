@@ -55,6 +55,7 @@ describe('TransportApplicationService', () => {
   });
 
   afterEach(async () => {
+    await prismaService
     await prismaService.transportApplication.deleteMany({});
     await prismaService.user.deleteMany({});
   });
