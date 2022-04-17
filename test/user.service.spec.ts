@@ -32,13 +32,16 @@ describe('UserService', () => {
     userService = moduleRef.get<UserService>(UserService);
     prismaService = moduleRef.get<PrismaService>(PrismaService);
 
-    await prismaService.user.deleteMany({});
     id1 = (await prismaService.user.create({
       data: user1
     })).id;
     id2 = (await prismaService.user.create({
       data: user2
     })).id;
+  });
+
+  afterEach(async () => {
+    await prismaService.user.deleteMany({});
   });
 
   describe('getUsers', () => {

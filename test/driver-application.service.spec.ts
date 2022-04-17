@@ -36,7 +36,6 @@ describe('DriverApplicationService', () => {
     driverApplicationService = moduleRef.get<DriverApplicationService>(DriverApplicationService);
     prismaService = moduleRef.get<PrismaService>(PrismaService);
 
-    await prismaService.driverApplication.deleteMany({});
     id1 = (await prismaService.driverApplication.create({
       data: driverApplication1
     })).id;
@@ -48,6 +47,10 @@ describe('DriverApplicationService', () => {
     })).id;
     await driverApplicationService.approveApplication(id2);
     await driverApplicationService.declineApplication(id3);
+  });
+
+  afterEach(async () => {
+    await prismaService.driverApplication.deleteMany({});
   });
 
   describe('getPendingDriverApplications', () => {
