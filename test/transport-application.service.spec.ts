@@ -19,10 +19,10 @@ describe('TransportApplicationService', () => {
     documentPublicId: "123e4567-e89b-12d3-a456-426614174000"
   };
   const user = {
-    firstName: "Mark",
-    lastName: "Putyato",
-    email: "m0rk4@gmail.com",
-    passwordHash: "pass"
+    firstName: "Nikita",
+    lastName: "Kolodko",
+    email: "fifa-legend@gmail.com",
+    passwordHash: "pass",
   };
   let id1, id2, userId;
 
@@ -55,9 +55,20 @@ describe('TransportApplicationService', () => {
   });
 
   afterEach(async () => {
-    await prismaService
-    await prismaService.transportApplication.deleteMany({});
-    await prismaService.user.deleteMany({});
+    let id = id1;
+    await prismaService.transportApplication.delete({
+      where: { id }
+    });
+
+    id = id2;
+    await prismaService.transportApplication.delete({
+      where: { id }
+    });
+
+    id = userId;
+    await prismaService.user.delete({
+      where: { id }
+    });
   });
 
   describe('getPendingTransportApplications', () => {
@@ -100,6 +111,11 @@ describe('TransportApplicationService', () => {
       };
 
       expect(await transportApplicationService.createTransportApplication(userId, documentPublicId)).toStrictEqual(result);
+
+      const id = result.id;
+      await prismaService.transportApplication.delete({
+        where: { id }
+      });
     });
   });
 
