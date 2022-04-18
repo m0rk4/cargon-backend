@@ -50,7 +50,20 @@ describe('DriverApplicationService', () => {
   });
 
   afterEach(async () => {
-    await prismaService.driverApplication.deleteMany({});
+    let id = id1;
+    await prismaService.driverApplication.delete({
+      where: { id }
+    });
+
+    id = id2;
+    await prismaService.driverApplication.delete({
+      where: { id }
+    });
+
+    id = id3;
+    await prismaService.driverApplication.delete({
+      where: { id }
+    });
   });
 
   describe('getPendingDriverApplications', () => {
@@ -99,6 +112,11 @@ describe('DriverApplicationService', () => {
       driver.createdAt = date;
       driver.updatedAt = date;
       expect(driver).toStrictEqual(result);
+
+      const id = driver.id;
+      await prismaService.driverApplication.delete({
+        where: { id }
+      });
     });
   });
 
