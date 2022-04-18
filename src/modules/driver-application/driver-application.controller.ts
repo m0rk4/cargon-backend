@@ -10,7 +10,7 @@ import {
 import { DriverApplicationService } from './driver-application.service';
 import { CreateDriverApplicationDto } from './model/create-driver-application-dto.interface';
 import { RoleGuard } from '../../shared/guards';
-import { Roles } from '../../shared/decorators';
+import { Public, Roles } from '../../shared/decorators';
 import { Role } from '@prisma/client';
 
 @Controller('driver-application')
@@ -39,6 +39,7 @@ export class DriverApplicationController {
   }
 
   @Post()
+  @Public()
   async createDriverApplication(
     @Body() createDriverApplicationDto: CreateDriverApplicationDto,
   ) {
