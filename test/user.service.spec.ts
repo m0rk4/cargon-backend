@@ -9,17 +9,17 @@ describe('UserService', () => {
   let prismaService: PrismaService;
 
   const date = new Date();
-  const passwordHash = 'pass';
+  const passwordHash = "pass";
   const user1 = {
-    firstName: 'Mark',
-    lastName: 'Putyato',
-    email: 'm0rk4@gmail.com',
+    firstName: "Mark",
+    lastName: "Putyato",
+    email: "m0rk4@gmail.com",
     passwordHash,
   };
   const user2 = {
-    firstName: 'Vlad',
-    lastName: 'Nevinsky',
-    email: 'newvlad2001@gmail.com',
+    firstName: "Vlad",
+    lastName: "Nevinsky",
+    email: "newvlad2001@gmail.com",
     passwordHash,
   };
   let id1, id2;
@@ -41,30 +41,38 @@ describe('UserService', () => {
   });
 
   afterEach(async () => {
-    await prismaService.user.deleteMany({});
+    let id = id1;
+    await prismaService.user.delete({
+      where: { id }
+    });
+
+    id = id2;
+    await prismaService.user.delete({
+      where: { id }
+    });
   });
 
   describe('getUsers', () => {
     it('should return all users in the system', async () => {
       const expectedResult = [{
           id: id1,
-          firstName: "Mark",
-          lastName: "Putyato",
-          email: "m0rk4@gmail.com",
+          firstName: user1.firstName,
+          lastName: user1.lastName,
+          email: user1.email,
           createdAt: date,
           isActive: true,
           updatedAt: date,
           userRating: new Decimal(5),
         },
         {
-          "id": id2,
-          "firstName": "Vlad",
-          "lastName": "Nevinsky",
-          "email": "newvlad2001@gmail.com",
-          "createdAt": date,
-          "isActive": true,
-          "updatedAt": date,
-          "userRating": new Decimal(5),
+          id: id2,
+          firstName: user2.firstName,
+          lastName: user2.lastName,
+          email: user2.email,
+          createdAt: date,
+          isActive: true,
+          updatedAt: date,
+          userRating: new Decimal(5),
         }
       ];
 
@@ -80,9 +88,9 @@ describe('UserService', () => {
     it('should return user by valid id', async () => {
       const result = {
         id: id1,
-        firstName: "Mark",
-        lastName: "Putyato",
-        email: "m0rk4@gmail.com",
+        firstName: user1.firstName,
+        lastName: user1.lastName,
+        email: user1.email,
         createdAt: date,
         isActive: true,
         updatedAt: date,
@@ -98,7 +106,7 @@ describe('UserService', () => {
     it('should return undefined by invalid id', async () => {
       const invalidId = 100000000;
       const result = null;
-      expect(await userService.getUser(invalidId)).toBe(result);
+      expect(await userService.getUser(invalidId)).toStrictEqual(result);
     });
   });
 
@@ -107,9 +115,9 @@ describe('UserService', () => {
       const validEmail = "m0rk4@gmail.com";
       const result = {
         id: id1,
-        firstName: "Mark",
-        lastName: "Putyato",
-        email: "m0rk4@gmail.com",
+        firstName: user1.firstName,
+        lastName: user1.lastName,
+        email: user1.email,
         createdAt: date,
         isActive: true,
         updatedAt: date,
@@ -139,10 +147,10 @@ describe('UserService', () => {
       };
       const result = {
         id: id2 + 1,
-        firstName: "Nikita",
-        lastName: "Kolodko",
-        email: "kolodkonikita05082001@gmail.com",
-        passwordHash: "123q456Q",
+        firstName: userToCreate.firstName,
+        lastName: userToCreate.lastName,
+        email: userToCreate.email,
+        passwordHash: userToCreate.password,
         createdAt: date,
         updatedAt: date,
         userRating: new Decimal(5),
@@ -154,6 +162,11 @@ describe('UserService', () => {
       user.createdAt = date;
       user.updatedAt = date;
       expect(user).toStrictEqual(result);
+
+      const id = user.id;
+      await prismaService.user.delete({
+        where: { id }
+      })
     });
   });
 
@@ -171,9 +184,9 @@ describe('UserService', () => {
       }
       const resultUser = {
         id: id1,
-        firstName: "Nikitos",
-        lastName: "Kolodko",
-        email: "kolodkonikitos@gmail.com",
+        firstName: userToUpdate.firstName,
+        lastName: userToUpdate.lastName,
+        email: userToUpdate.email,
         createdAt: date,
         isActive: true,
         updatedAt: date,
