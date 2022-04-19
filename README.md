@@ -43,6 +43,9 @@ $ npm run start:prod
 # unit tests
 $ npm run test
 
+# unit tests sequentially
+$ npm test -- --runInBand
+
 # e2e tests
 $ npm run test:e2e
 
