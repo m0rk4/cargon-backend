@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../shared/prisma/prisma.service';
 import { OrderStatus } from '@prisma/client';
-import { UpdateOrderDto } from './model/update-order-dto.interface';
 import { CreateOrderDto } from './model/create-order-dto.interface';
 import { LocationService } from '../location/location.service';
 import { CargoService } from '../cargo/cargo.service';
 import { CreateLocationDto } from '../location/model/create-location-dto.interface';
 import { CreateCargoDto } from '../cargo/model/create-cargo-dto.interface';
 import { BookOrderDto } from './model/book-order-dto.interface';
+import { UpdateOrderLocations } from './model/update-order-locations.interface';
 
 @Injectable()
 export class OrderService {
@@ -33,6 +33,7 @@ export class OrderService {
       firstName: true,
       lastName: true,
       userRating: true,
+      email: true,
     },
   };
 
@@ -54,14 +55,14 @@ export class OrderService {
     private cargoService: CargoService,
   ) {}
 
-  async createOrder(data: CreateOrderDto) {
+  async createOrder(ownerId: number, data: CreateOrderDto) {
     const [fromLocationId, toLocationId] = await this.getLocationsIds(
       data.fromLocation,
       data.toLocation,
     );
     const order = await this.prismaService.order.create({
       data: {
-        ownerId: data.userId,
+        ownerId,
         toLocationId,
         fromLocationId,
       },
@@ -118,8 +119,16 @@ export class OrderService {
     });
   }
 
-  // To update cargos in the order use CargoController
-  async updateOrder(id: number, data: UpdateOrderDto) {
+  async updateOrderCargos(id: number, cargos: CreateCargoDto[]) {
+    const deleteOldCargos = this.cargoService.deleteOrderCargos(id);
+    const addNewCargos = this.prismaService.order.update({
+      where: { id },
+      data: { cargos: { create: cargos }, status: OrderStatus.PENDING },
+    });
+    return this.prismaService.$transaction([deleteOldCargos, addNewCargos]);
+  }
+
+  async updateOrderLocations(id: number, data: UpdateOrderLocations) {
     const [fromLocationId, toLocationId] = await this.getLocationsIds(
       data.fromLocation,
       data.toLocation,
@@ -142,13 +151,13 @@ export class OrderService {
     return this.changeOrderStatus(id, OrderStatus.DECLINED);
   }
 
-  async bookOrder(id: number, data: BookOrderDto) {
+  async bookOrder(id: number, driverId: number, data: BookOrderDto) {
     return this.prismaService.$transaction(async (prisma) => {
       await this.setOrderTransports(id, data.transportIds);
       return prisma.order.update({
         select: { id: true },
         where: { id },
-        data: { status: OrderStatus.BOOKED, driverId: data.driverId },
+        data: { status: OrderStatus.BOOKED, driverId },
       });
     });
   }
@@ -192,7 +201,11 @@ export class OrderService {
 
   private async setOrderTransports(orderId: number, transportIds: number[]) {
     const transports = transportIds.map((transportId) => {
-      return { orderId, transportId, actualDistance: this.calcDistance() };
+      return {
+        orderId,
+        transportId,
+        actualDistance: OrderService.calcDistance(),
+      };
     });
     return this.prismaService.orderTransport.createMany({
       data: transports,
@@ -208,7 +221,7 @@ export class OrderService {
   }
 
   // TODO: implement some logic to calc distances
-  private calcDistance() {
+  private static calcDistance() {
     return 100;
   }
 }

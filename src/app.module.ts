@@ -7,10 +7,16 @@ import { LocationModule } from './modules/location/location.module';
 import { ConfigModule } from '@nestjs/config';
 import { CargoModule } from './modules/cargo/cargo.module';
 import { VehicleModule } from './modules/vehicle/vehicle.module';
+import { APP_GUARD } from '@nestjs/core';
+import { PrismaModule } from './shared/prisma/prisma.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { AtGuard } from './modules/auth/guards';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
+    AuthModule,
+    PrismaModule,
     TransportApplicationModule,
     DriverApplicationModule,
     UserModule,
@@ -19,7 +25,11 @@ import { VehicleModule } from './modules/vehicle/vehicle.module';
     CargoModule,
     VehicleModule,
   ],
-  controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AtGuard,
+    },
+  ],
 })
 export class AppModule {}

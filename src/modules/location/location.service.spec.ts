@@ -1,23 +1,23 @@
-import { Test } from "@nestjs/testing";
-import { LocationService } from '../src/modules/location/location.service';
-import { PrismaService } from '../src/shared/prisma/prisma.service';
+import { Test } from '@nestjs/testing';
+import { LocationService } from './location.service';
+import { PrismaService } from '../../shared/prisma/prisma.service';
 
 describe('LocationService', () => {
   let locationService: LocationService;
   let prismaService: PrismaService;
 
   const city1 = {
-    name: "Minsk"
+    name: 'Minsk',
   };
   const city2 = {
-    name: "Gomel"
+    name: 'Gomel',
   };
 
   const street1 = {
-    name: "Gikaly"
+    name: 'Gikaly',
   };
   const street2 = {
-    name: "Gorkogo"
+    name: 'Gorkogo',
   };
 
   const home1 = 5;
@@ -33,40 +33,52 @@ describe('LocationService', () => {
     locationService = moduleRef.get<LocationService>(LocationService);
     prismaService = moduleRef.get<PrismaService>(PrismaService);
 
-    cityId1 = (await prismaService.city.create({
-      select: { id: true },
-      data: city1
-    })).id;
-    cityId2 = (await prismaService.city.create({
-      select: { id: true },
-      data: city2
-    })).id;
+    cityId1 = (
+      await prismaService.city.create({
+        select: { id: true },
+        data: city1,
+      })
+    ).id;
+    cityId2 = (
+      await prismaService.city.create({
+        select: { id: true },
+        data: city2,
+      })
+    ).id;
 
-    streetId1 = (await prismaService.street.create({
-      select: { id: true },
-      data: street1
-    })).id;
-    streetId2 = (await prismaService.street.create({
-      select: { id: true },
-      data: street2
-    })).id;
+    streetId1 = (
+      await prismaService.street.create({
+        select: { id: true },
+        data: street1,
+      })
+    ).id;
+    streetId2 = (
+      await prismaService.street.create({
+        select: { id: true },
+        data: street2,
+      })
+    ).id;
 
-    locationId1 = (await prismaService.location.create({
-      select: { id: true },
-      data: {
-        home: home1,
-        streetId: streetId1,
-        cityId: cityId1
-      }
-    })).id;
-    locationId2 = (await prismaService.location.create({
-      select: { id: true },
-      data: {
-        home: home2,
-        streetId: streetId2,
-        cityId: cityId2
-      }
-    })).id;
+    locationId1 = (
+      await prismaService.location.create({
+        select: { id: true },
+        data: {
+          home: home1,
+          streetId: streetId1,
+          cityId: cityId1,
+        },
+      })
+    ).id;
+    locationId2 = (
+      await prismaService.location.create({
+        select: { id: true },
+        data: {
+          home: home2,
+          streetId: streetId2,
+          cityId: cityId2,
+        },
+      })
+    ).id;
   });
 
   afterEach(async () => {
@@ -80,12 +92,12 @@ describe('LocationService', () => {
       const streets = [
         {
           id: streetId1,
-          name: street1.name
+          name: street1.name,
         },
         {
           id: streetId2,
-          name: street2.name
-        }
+          name: street2.name,
+        },
       ];
 
       expect(await locationService.getStreets()).toStrictEqual(streets);
@@ -97,12 +109,12 @@ describe('LocationService', () => {
       const cities = [
         {
           id: cityId1,
-          name: city1.name
+          name: city1.name,
         },
         {
           id: cityId2,
-          name: city2.name
-        }
+          name: city2.name,
+        },
       ];
 
       expect(await locationService.getCities()).toStrictEqual(cities);
@@ -119,46 +131,49 @@ describe('LocationService', () => {
         home: home,
         street: {
           id: street,
-          name: street1.name
+          name: street1.name,
         },
         city: {
           id: city,
-          name: city1.name
-        }
+          name: city1.name,
+        },
       };
       const result = {
         id: locationId1,
         home: home,
         streetId: street,
-        cityId: city
+        cityId: city,
       };
 
-      expect(await locationService.getOrCreateLocation(location)).toStrictEqual(result);
+      expect(await locationService.getOrCreateLocation(location)).toStrictEqual(
+        result,
+      );
     });
 
     it('should create new location and return its credentials', async () => {
       const home = 11;
-      const street = "Pushkin";
-      const city = "Pinsk";
+      const street = 'Pushkin';
+      const city = 'Pinsk';
 
       const location = {
         home: home,
         street: {
-          name: street
+          name: street,
         },
         city: {
-          name: city
-        }
+          name: city,
+        },
       };
       const result = {
         id: locationId2 + 1,
         home: home,
         streetId: streetId2 + 1,
-        cityId: cityId2 + 1
+        cityId: cityId2 + 1,
       };
 
-      expect(await locationService.getOrCreateLocation(location)).toStrictEqual(result);
+      expect(await locationService.getOrCreateLocation(location)).toStrictEqual(
+        result,
+      );
     });
   });
-
 });
