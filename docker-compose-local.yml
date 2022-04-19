@@ -13,5 +13,17 @@ services:
       - 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}'
       - 'POSTGRES_DB=${POSTGRES_DB}'
 
+  postgres-test:
+    image: postgres
+    container_name: cargon-postgres-test
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: cargon
+
 volumes:
   postgres:
+  postgres-test:
