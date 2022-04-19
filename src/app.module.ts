@@ -10,7 +10,7 @@ import { VehicleModule } from './modules/vehicle/vehicle.module';
 import { APP_GUARD } from '@nestjs/core';
 import { PrismaModule } from './shared/prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { AtGuard } from './shared/guards';
+import { AtGuard } from './modules/auth/guards';
 
 @Module({
   imports: [

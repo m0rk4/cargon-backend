@@ -9,8 +9,8 @@ import {
 } from '@nestjs/common';
 import { DriverApplicationService } from './driver-application.service';
 import { CreateDriverApplicationDto } from './model/create-driver-application-dto.interface';
-import { RoleGuard } from '../../shared/guards';
-import { Public, Roles } from '../../shared/decorators';
+import { RoleGuard } from '../auth/guards';
+import { Public, Roles } from '../auth/decorators';
 import { Role } from '@prisma/client';
 
 @Controller('driver-application')

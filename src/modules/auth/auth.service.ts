@@ -19,7 +19,7 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
-    private config: ConfigService,
+    private configService: ConfigService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<JwtPayload> {
@@ -65,10 +65,10 @@ export class AuthService {
 
   async signinLocal(dto: SignInDto): Promise<LoginResponse> {
     const user = await this.userService.getUserByEmail(dto.email);
-    return await this.getTokens(user);
+    return await this.getToken(user);
   }
 
-  async getTokens(user: User): Promise<LoginResponse> {
+  async getToken(user: User): Promise<LoginResponse> {
     const jwtPayload: JwtPayload = {
       sub: user.id,
       email: user.email,
@@ -76,15 +76,16 @@ export class AuthService {
     };
 
     const access_token = await this.jwtService.signAsync(jwtPayload, {
-      secret: this.config.get<string>('AT_SECRET'),
-      expiresIn: this.config.get<string>('AT_EXPIRES_IN'),
+      secret: this.configService.get<string>('AT_SECRET'),
+      expiresIn:
+        this.configService.get<number>('AT_EXPIRES_IN_MILLISECONDS') / 1000,
     });
 
     delete user.passwordHash;
     return {
       user,
       accessToken: access_token,
-      expiresIn: +this.config.get<string>('AT_EXPIRES_IN_MILLISECONDS'),
+      expiresIn: this.configService.get<number>('AT_EXPIRES_IN_MILLISECONDS'),
     };
   }
 }

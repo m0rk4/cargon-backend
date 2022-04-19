@@ -1,8 +1,8 @@
 import { Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Roles } from '../../shared/decorators';
+import { Roles } from '../auth/decorators';
 import { Role } from '@prisma/client';
-import { RoleGuard } from '../../shared/guards';
+import { RoleGuard } from '../auth/guards';
 
 @Controller('user')
 export class UserController {

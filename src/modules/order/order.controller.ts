@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './model/create-order-dto.interface';
 import { BookOrderDto } from './model/book-order-dto.interface';
-import { GetCurrentUserId } from '../../shared/decorators';
+import { GetCurrentUserId } from '../auth/decorators';
 import { CreateCargoDto } from '../cargo/model/create-cargo-dto.interface';
 import { UpdateOrderLocations } from './model/update-order-locations.interface';
 

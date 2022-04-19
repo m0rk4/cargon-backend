@@ -9,8 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { TransportApplicationService } from './transport-application.service';
-import { RoleGuard } from '../../shared/guards';
-import { GetCurrentUserId, Roles } from '../../shared/decorators';
+import { RoleGuard } from '../auth/guards';
+import { GetCurrentUserId, Roles } from '../auth/decorators';
 import { Role } from '@prisma/client';
 
 @Controller('transport-application')

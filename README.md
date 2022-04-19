@@ -11,6 +11,11 @@ $ npm install
 $ docker-compose -f docker-compose-local.yml up -d postgres 
 ```
 
+## Run Test DB
+```bash
+$ docker-compose -f docker-compose-local.yml up -d postgres-test 
+```
+
 ## Setup DB (Apply Prisma migrations)
 ```bash
 $ prisma migrate deploy
@@ -18,7 +23,7 @@ $ prisma migrate deploy
 If you want to update the database structure, apply changes to `prisma.schema`
 then run
 ```bash
-$ prisma migrate dev --name init 
+$ prisma migrate dev --name ${NAME_OF_THE_MIGRATION} 
 ```
 To clear the database and fill it with the test data run
 ```bash
@@ -41,10 +46,9 @@ $ npm run start:prod
 
 ```bash
 # unit tests
-$ npm run test
+Before running tests make sure test container is up.
 
-# unit tests sequentially
-$ npm test -- --runInBand
+$ npm run test
 
 # e2e tests
 $ npm run test:e2e

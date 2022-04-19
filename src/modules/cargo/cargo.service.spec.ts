@@ -1,8 +1,8 @@
-import { Test } from "@nestjs/testing";
-import { CargoService } from '../src/modules/cargo/cargo.service';
-import { OrderService } from '../src/modules/order/order.service';
-import { LocationService } from '../src/modules/location/location.service';
-import { PrismaService } from '../src/shared/prisma/prisma.service';
+import { Test } from '@nestjs/testing';
+import { CargoService } from './cargo.service';
+import { OrderService } from '../order/order.service';
+import { LocationService } from '../location/location.service';
+import { PrismaService } from '../../shared/prisma/prisma.service';
 
 describe('CargoService', () => {
   let cargoService: CargoService;
@@ -10,40 +10,41 @@ describe('CargoService', () => {
   let prismaService: PrismaService;
 
   const user = {
-    firstName: "Ivan",
-    lastName: "Zelezinski",
-    email: "ivanzel@gmail.com",
-    passwordHash: "pass",
+    firstName: 'Ivan',
+    lastName: 'Zelezinski',
+    email: 'ivanzel@gmail.com',
+    passwordHash: 'pass',
   };
+
   const order = {
-    userId: 0,
     fromLocation: {
       city: {
-        name: "Minsk"
+        name: 'Minsk',
       },
       street: {
-        name: "Gikaly"
+        name: 'Gikaly',
       },
-      home: 5
+      home: 5,
     },
     toLocation: {
       city: {
-        name: "Gomel"
+        name: 'Gomel',
       },
       street: {
-        name: "Gorkogo"
+        name: 'Gorkogo',
       },
-      home: 19
+      home: 19,
     },
-    cargos: []
+    cargos: [],
   };
+
   const cargo = {
     orderId: 0,
     weight: 10,
     length: 50,
     width: 100,
     height: 60,
-    name: "Table"
+    name: 'Table',
   };
 
   let cargoId, userId, orderId;
@@ -57,26 +58,29 @@ describe('CargoService', () => {
     prismaService = moduleRef.get<PrismaService>(PrismaService);
     orderService = moduleRef.get<OrderService>(OrderService);
 
-    userId = (await prismaService.user.create({
-      data: user
-    })).id;
+    userId = (
+      await prismaService.user.create({
+        data: user,
+      })
+    ).id;
 
-    order.userId = userId;
-    orderId = (await orderService.createOrder(order)).id;
+    orderId = (await orderService.createOrder(userId, order)).id;
 
     cargo.orderId = orderId;
-    cargoId = (await prismaService.cargo.create({
-      data: cargo
-    })).id;
+    cargoId = (
+      await prismaService.cargo.create({
+        data: cargo,
+      })
+    ).id;
   });
 
   afterEach(async () => {
     await prismaService.cargo.deleteMany({});
     await prismaService.order.delete({
-      where: { id: orderId }
+      where: { id: orderId },
     });
     await prismaService.user.delete({
-      where: { id: userId }
+      where: { id: userId },
     });
     await prismaService.location.deleteMany({});
     await prismaService.street.deleteMany({});
@@ -92,7 +96,7 @@ describe('CargoService', () => {
         width: cargo.width,
         height: cargo.height,
         name: cargo.name,
-        orderId: orderId
+        orderId: orderId,
       };
 
       expect(await cargoService.getCargo(cargoId)).toStrictEqual(resultCargo);
@@ -101,6 +105,7 @@ describe('CargoService', () => {
     it('should return null by invalid id', async () => {
       const invalidId = 100000000;
       const result = null;
+
       expect(await cargoService.getCargo(invalidId)).toStrictEqual(result);
     });
   });
@@ -115,17 +120,22 @@ describe('CargoService', () => {
           width: cargo.width,
           height: cargo.height,
           name: cargo.name,
-          orderId: orderId
-        }
+          orderId: orderId,
+        },
       ];
 
-      expect(await cargoService.getOrderCargos(orderId)).toStrictEqual(resultCargoList);
+      expect(await cargoService.getOrderCargos(orderId)).toStrictEqual(
+        resultCargoList,
+      );
     });
 
     it('should return an empty list by invalid orderId', async () => {
       const invalidOrderId = 100000000;
       const result = [];
-      expect(await cargoService.getOrderCargos(invalidOrderId)).toStrictEqual(result);
+
+      expect(await cargoService.getOrderCargos(invalidOrderId)).toStrictEqual(
+        result,
+      );
     });
   });
 
@@ -136,7 +146,7 @@ describe('CargoService', () => {
         length: 250,
         width: 200,
         height: 40,
-        name: "Sofa"
+        name: 'Sofa',
       };
       const result = {
         id: 0,
@@ -145,10 +155,13 @@ describe('CargoService', () => {
         length: createCargo.length,
         width: createCargo.width,
         height: createCargo.height,
-        name: createCargo.name
+        name: createCargo.name,
       };
 
-      const returnedCargo = await cargoService.createCargo(orderId, createCargo);
+      const returnedCargo = await cargoService.createCargo(
+        orderId,
+        createCargo,
+      );
       result.id = returnedCargo.id;
       expect(returnedCargo).toStrictEqual(result);
     });
@@ -161,10 +174,10 @@ describe('CargoService', () => {
         length: 100,
         width: 80,
         height: 1,
-        name: "Carpet"
+        name: 'Carpet',
       };
       const updateResult = {
-        id: cargoId
+        id: cargoId,
       };
       const getResult = {
         id: cargoId,
@@ -173,10 +186,12 @@ describe('CargoService', () => {
         width: updateCargo.width,
         height: updateCargo.height,
         name: updateCargo.name,
-        orderId: orderId
+        orderId: orderId,
       };
 
-      expect(await cargoService.updateCargo(cargoId, updateCargo)).toStrictEqual(updateResult);
+      expect(
+        await cargoService.updateCargo(cargoId, updateCargo),
+      ).toStrictEqual(updateResult);
       expect(await cargoService.getCargo(cargoId)).toStrictEqual(getResult);
     });
   });
@@ -184,13 +199,16 @@ describe('CargoService', () => {
   describe('deleteCargo', () => {
     it('should delete existing cargo', async () => {
       const deleteResult = {
-        id: cargoId
+        id: cargoId,
       };
       const getResult = [];
 
-      expect(await cargoService.deleteCargo(cargoId)).toStrictEqual(deleteResult);
-      expect(await cargoService.getOrderCargos(orderId)).toStrictEqual(getResult);
+      expect(await cargoService.deleteCargo(cargoId)).toStrictEqual(
+        deleteResult,
+      );
+      expect(await cargoService.getOrderCargos(orderId)).toStrictEqual(
+        getResult,
+      );
     });
   });
-
 });

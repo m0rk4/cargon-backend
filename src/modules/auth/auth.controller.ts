@@ -11,8 +11,8 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './dto';
 import { LoginResponse } from './types';
 import { SignUpDto } from './dto/sign-up.dto';
-import { Public } from '../../shared/decorators';
-import { LocalAuthGuard } from '../../shared/guards';
+import { Public } from './decorators';
+import { LocalAuthGuard } from './guards';
 
 @Controller('auth')
 export class AuthController {

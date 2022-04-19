@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing';
-import { CargoController } from '../src/modules/cargo/cargo.controller';
-import { CargoService } from '../src/modules/cargo/cargo.service';
-import { PrismaService } from '../src/shared/prisma/prisma.service';
-import { prismaMock } from '../src/modules/test/singleton';
+import { CargoController } from './cargo.controller';
+import { CargoService } from './cargo.service';
+import { PrismaService } from '../../shared/prisma/prisma.service';
+import { prismaMock } from '../test/singleton';
 
 describe('CargoController', () => {
   let cargoController: CargoController;
