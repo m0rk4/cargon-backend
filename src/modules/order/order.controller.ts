@@ -1,9 +1,10 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './model/create-order-dto.interface';
-import { UpdateOrderDto } from './model/update-order-dto.interface';
 import { BookOrderDto } from './model/book-order-dto.interface';
 import { GetCurrentUserId } from '../../shared/decorators';
+import { CreateCargoDto } from '../cargo/model/create-cargo-dto.interface';
+import { UpdateOrderLocations } from './model/update-order-locations.interface';
 
 @Controller('order')
 export class OrderController {
@@ -63,12 +64,20 @@ export class OrderController {
     return this.orderService.completeOrder(+id);
   }
 
-  @Put(':id')
-  async updateOrder(
+  @Put(':id/cargos')
+  async updateOrderCargos(
     @Param('id') id: string,
-    @Body() updateOrderDto: UpdateOrderDto,
+    @Body() body: CreateCargoDto[],
   ) {
-    return this.orderService.updateOrder(+id, updateOrderDto);
+    return this.orderService.updateOrderCargos(+id, body);
+  }
+
+  @Put(':id/locations')
+  async updateOrderLocations(
+    @Param('id') id: string,
+    @Body() updateOrderDto: UpdateOrderLocations,
+  ) {
+    return this.orderService.updateOrderLocations(+id, updateOrderDto);
   }
 
   @Post()

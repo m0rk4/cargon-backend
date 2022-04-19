@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../shared/prisma/prisma.service';
 import { OrderStatus } from '@prisma/client';
-import { UpdateOrderDto } from './model/update-order-dto.interface';
 import { CreateOrderDto } from './model/create-order-dto.interface';
 import { LocationService } from '../location/location.service';
 import { CargoService } from '../cargo/cargo.service';
 import { CreateLocationDto } from '../location/model/create-location-dto.interface';
 import { CreateCargoDto } from '../cargo/model/create-cargo-dto.interface';
 import { BookOrderDto } from './model/book-order-dto.interface';
+import { UpdateOrderLocations } from './model/update-order-locations.interface';
 
 @Injectable()
 export class OrderService {
@@ -119,8 +119,16 @@ export class OrderService {
     });
   }
 
-  // To update cargos in the order use CargoController
-  async updateOrder(id: number, data: UpdateOrderDto) {
+  async updateOrderCargos(id: number, cargos: CreateCargoDto[]) {
+    const deleteOldCargos = this.cargoService.deleteOrderCargos(id);
+    const addNewCargos = this.prismaService.order.update({
+      where: { id },
+      data: { cargos: { create: cargos }, status: OrderStatus.PENDING },
+    });
+    return this.prismaService.$transaction([deleteOldCargos, addNewCargos]);
+  }
+
+  async updateOrderLocations(id: number, data: UpdateOrderLocations) {
     const [fromLocationId, toLocationId] = await this.getLocationsIds(
       data.fromLocation,
       data.toLocation,

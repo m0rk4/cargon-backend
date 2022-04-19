@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaPromise, Prisma } from '@prisma/client';
 import { PrismaService } from '../../shared/prisma/prisma.service';
 import { CreateCargoDto } from './model/create-cargo-dto.interface';
 import { UpdateCargoDto } from './model/update-cargo-dto.interface';
@@ -37,6 +38,12 @@ export class CargoService {
     return this.prismaService.cargo.delete({
       select: { id: true },
       where: { id },
+    });
+  }
+
+  deleteOrderCargos(orderId: number): PrismaPromise<Prisma.BatchPayload> {
+    return this.prismaService.cargo.deleteMany({
+      where: { orderId },
     });
   }
 }
