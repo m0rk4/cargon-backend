@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drivers Statistic</title>
+</head>
+<body>
+<div style="display: flex; align-items: center; flex-direction: column; ">
+  <h1>Cargon Drivers Statistic Report</h1>
+  <table style="margin-top: 20px; border: 1px solid; border-collapse: collapse;">
+    <thead>
+    <tr>
+      {{#each headers}}
+      <th style="padding: 5px; border: 1px solid; text-align: center;">{{this}}</th>
+      {{/each}}
+    </tr>
+    </thead>
+    <tbody>
+    {{#each statistic}}
+    <tr >
+      <td style="padding: 5px; border: 1px solid; text-align: center;">{{this.driver_id}}</td>
+      <td style="padding: 5px; border: 1px solid; text-align: center;">{{this.driver_surname}}</td>
+      <td style="padding: 5px; border: 1px solid; text-align: center;">{{this.mileage}}</td>
+    </tr>
+    {{/each}}
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
