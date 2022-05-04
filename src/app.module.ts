@@ -7,6 +7,7 @@ import { LocationModule } from './modules/location/location.module';
 import { ConfigModule } from '@nestjs/config';
 import { CargoModule } from './modules/cargo/cargo.module';
 import { VehicleModule } from './modules/vehicle/vehicle.module';
+import { StatisticModule } from './modules/statistic/statistic.module';
 import { APP_GUARD } from '@nestjs/core';
 import { PrismaModule } from './shared/prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -24,6 +25,7 @@ import { AtGuard } from './modules/auth/guards';
     LocationModule,
     CargoModule,
     VehicleModule,
+    StatisticModule,
   ],
   providers: [
     {

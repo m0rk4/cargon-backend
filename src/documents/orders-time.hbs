@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Orders Time Statistic</title>
+</head>
+<body>
+<div style="display: flex; align-items: center; flex-direction: column; ">
+    <h1>Cargon Orders Time Report</h1>
+    <table style="margin-top: 20px; border: 1px solid; border-collapse: collapse;">
+        <thead>
+        <tr>
+            <th style="padding: 5px; border: 1px solid; text-align: center;">Day/hour</th>
+            {{#each hours}}
+            <th style="padding: 5px; width: 20px; border: 1px solid; text-align: center;">{{this}}</th>
+            {{/each}}
+        </tr>
+        </thead>
+        <tbody>
+        {{#each statistic}}
+        <tr >
+            <th style="padding: 5px; border: 1px solid; text-align: center;">{{this.day}}</th>
+            {{#each this.data}}
+            <td style="padding: 5px; width: 20px; border: 1px solid; text-align: center;">{{this}}</td>
+            {{/each}}
+        </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
