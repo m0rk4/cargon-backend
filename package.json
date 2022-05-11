@@ -34,14 +34,17 @@
     "argon2": "^0.28.5",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
+    "csv-writer": "^1.6.0",
+    "hbs": "^4.2.0",
+    "html-pdf": "^3.0.1",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "hbs": "^4.2.0",
-    "html-pdf": "^3.0.1",
+    "pdfkit-table": "^0.1.93",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
