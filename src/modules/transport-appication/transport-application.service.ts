@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, StreamableFile } from '@nestjs/common';
 import { PrismaService } from '../../shared/prisma/prisma.service';
 import { TransportApplicationStatus } from '@prisma/client';
 import { HttpService } from '@nestjs/axios';
-import { map, switchMap } from 'rxjs';
+import { lastValueFrom, map, switchMap } from 'rxjs';
 
 @Injectable()
 export class TransportApplicationService {
@@ -55,22 +55,24 @@ export class TransportApplicationService {
     });
   }
 
-  getTransportApplicationDocument(documentPublicId: string) {
-    return this.httpService
-      .get<{ url: string }>(
-        `https://api.cloudinary.com/v1_1/${process.env.CLOUD_NAME}/resources/image/upload/${documentPublicId}`,
-        {
-          headers: {
-            Authorization: `Basic ${btoa(
-              `${process.env.CLOUD_API_KEY}:${process.env.CLOUD_API_SECRET}`,
-            )}`,
+  async getTransportApplicationDocument(documentPublicId: string) {
+    return await lastValueFrom(
+      this.httpService
+        .get<{ url: string }>(
+          `https://api.cloudinary.com/v1_1/${process.env.CLOUD_NAME}/resources/image/upload/${documentPublicId}`,
+          {
+            headers: {
+              Authorization: `Basic ${btoa(
+                `${process.env.CLOUD_API_KEY}:${process.env.CLOUD_API_SECRET}`,
+              )}`,
+            },
           },
-        },
-      )
-      .pipe(
-        switchMap(({ data: { url } }) => this.httpService.get<string>(url)),
-        map(({ data }) => data),
-      );
+        )
+        .pipe(
+          switchMap(({ data: { url } }) => this.httpService.get<string>(url)),
+          map(({ data }) => new StreamableFile(Buffer.from(data, 'utf-8'))),
+        ),
+    );
   }
 
   private changeTransportApplicationStatus(
