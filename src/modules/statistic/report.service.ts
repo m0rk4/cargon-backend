@@ -312,6 +312,53 @@ export class ReportService {
     }
   }
 
+  async getUsersOrdersCount(
+    type: string,
+    @Response({ passthrough: true }) res,
+  ) {
+    const data = (await this.statisticService.getUsersOrdersCount()) as any[];
+    switch (type) {
+      case 'csv': {
+        const header = [
+          { id: 'email', title: 'Email' },
+          { id: 'count', title: 'Count' },
+        ];
+        res.set({
+          'Content-Type': 'text/csv',
+          'Content-Disposition': 'attachment; filename="file.csv"',
+        });
+        return this.fileService.getCsvReport(header, data);
+      }
+      case 'xlsx': {
+        const header = ['Email', 'Count'];
+        const transformedData = data.map((item) => {
+          return [item.email, item.count];
+        });
+        res.set({
+          'Content-Type':
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'Content-Disposition': 'attachment; filename="file.xlsx"',
+        });
+        return this.fileService.getXlsxReport(header, transformedData);
+      }
+      case 'pdf': {
+        const header = [
+          { label: 'Email', property: 'email' },
+          { label: 'Count', property: 'count' },
+        ];
+        res.set({
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': 'attachment; filename="file.pdf"',
+        });
+        return this.fileService.getPdfReport(
+          header,
+          data,
+          'Users orders count report',
+        );
+      }
+    }
+  }
+
   private static dayOfWeek(day: string) {
     return {
       day_of_week: day,

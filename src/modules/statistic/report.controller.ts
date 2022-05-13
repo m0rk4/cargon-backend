@@ -47,4 +47,14 @@ export class ReportController {
   ) {
     return this.reportService.getOrdersVolumes(type, res);
   }
+
+  @Get('/users-orders-count/:type')
+  @UseGuards(RoleGuard)
+  @Roles(Role.ADMIN)
+  async getUsersOrdersCount(
+    @Response({ passthrough: true }) res,
+    @Param('type') type: string,
+  ) {
+    return this.reportService.getUsersOrdersCount(type, res);
+  }
 }

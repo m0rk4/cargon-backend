@@ -28,14 +28,23 @@ export class StatisticService {
   async getOrdersTimeStatistic() {
     return this.prismaService.$queryRaw<
       { day_of_week: number | string; hour: number; orders_count: number }[]
-    >`SELECT EXTRACT(DOW FROM "createdAt") AS "day_of_week", EXTRACT(HOUR FROM "createdAt") AS "hour", COUNT(*) AS "orders_count"
-         FROM "public"."Order"
-         GROUP BY "day_of_week", "hour"`;
+    >`SELECT EXTRACT(DOW FROM "createdAt")  AS "day_of_week",
+                                                                                     EXTRACT(HOUR FROM "createdAt") AS "hour",
+                                                                                     COUNT(*)                       AS "orders_count"
+                                                                              FROM "public"."Order"
+                                                                              GROUP BY "day_of_week", "hour"`;
   }
 
   async getOrdersVolumes() {
     return this.prismaService
-      .$queryRaw`SELECT SUM("weight"*"length"*"width") as "volume", SUM("weight") as "weight"
-         FROM "public"."Cargo"`;
+      .$queryRaw`SELECT SUM(CAST("weight" AS INT) * "length" * "width") as "volume", SUM("weight") as "weight"
+                 FROM "public"."Cargo"`;
+  }
+
+  async getUsersOrdersCount() {
+    return this.prismaService.$queryRaw`SELECT "email", COUNT(*) AS "count"
+                 FROM "public"."Order"
+                          INNER JOIN "public"."User" U ON U.id = "public"."Order"."ownerId"
+                 GROUP BY "ownerId", "email" ORDER BY "count" DESC;`;
   }
 }

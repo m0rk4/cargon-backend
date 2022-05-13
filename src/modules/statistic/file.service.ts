@@ -77,10 +77,12 @@ export class FileService {
 
     const doc = new PDFDocument(permissions);
 
-    doc.font('Times-Roman');
-    doc.fontSize(18).fillColor('red').text('Cargon', { align: 'center' });
+    doc.image('background.jpg', 0, 0, { width: 800, height: 650 });
+
+    doc.font('Times-Bold');
+    doc.fontSize(24).fillColor('aqua').text('CARGON', { align: 'center' });
     doc.moveDown();
-    doc.fontSize(16).fillColor('black').text(reportName, { align: 'center' });
+    doc.fontSize(20).fillColor('black').text(reportName, { align: 'center' });
     doc.moveDown();
 
     const table = {
@@ -96,9 +98,9 @@ export class FileService {
     });
     doc.moveDown();
     doc
-      .fontSize(9)
+      .fontSize(12)
       .fillColor('black')
-      .text('Cargon. All rights reserved', { align: 'left' });
+      .text('© Cargon. All rights reserved', { align: 'left' });
     doc.end();
 
     return new StreamableFile(await getStream.buffer(doc));
