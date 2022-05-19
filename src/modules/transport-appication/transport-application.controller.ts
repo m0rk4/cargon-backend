@@ -6,7 +6,6 @@ import {
   Post,
   Put,
   Query,
-  Response,
   UseGuards,
 } from '@nestjs/common';
 import { TransportApplicationService } from './transport-application.service';
@@ -31,14 +30,9 @@ export class TransportApplicationController {
   @UseGuards(RoleGuard)
   @Roles(Role.MANAGER)
   async getTransportApplicationDocument(
-    @Response({ passthrough: true }) res,
     @Query('documentPublicId') documentPublicId: string,
   ) {
-    res.set({
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': 'attachment; filename="file.pdf"',
-    });
-    return this.transportApplicationService.getTransportApplicationDocument(
+    return await this.transportApplicationService.getTransportApplicationDocument(
       documentPublicId,
     );
   }

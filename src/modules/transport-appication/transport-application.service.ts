@@ -1,8 +1,8 @@
-import { Injectable, StreamableFile } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../shared/prisma/prisma.service';
 import { TransportApplicationStatus } from '@prisma/client';
 import { HttpService } from '@nestjs/axios';
-import { lastValueFrom, map, switchMap } from 'rxjs';
+import { lastValueFrom, of, switchMap } from 'rxjs';
 
 @Injectable()
 export class TransportApplicationService {
@@ -68,10 +68,7 @@ export class TransportApplicationService {
             },
           },
         )
-        .pipe(
-          switchMap(({ data: { url } }) => this.httpService.get<string>(url)),
-          map(({ data }) => new StreamableFile(Buffer.from(data, 'utf-8'))),
-        ),
+        .pipe(switchMap(({ data: { url } }) => of(url))),
     );
   }
 
